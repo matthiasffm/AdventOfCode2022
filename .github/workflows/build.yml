@@ -1,4 +1,4 @@
-name: build .NET
+name: build .Net and Scala
 
 on:
   push:
@@ -20,11 +20,11 @@ jobs:
         dotnet-version: '7.x'
         dotnet-quality: 'ga'
 
-    - name: Restore dependencies
+    - name: Restore .NET dependencies
       run: dotnet restore
 
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build .NET
+      run: dotnet build CSharp/aoc2022.csproj --no-restore
 
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Test .NET
+      run: dotnet test CSharp/aoc2022.csproj --no-build --verbosity normal

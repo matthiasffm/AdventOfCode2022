@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="microsoft.net.test.sdk" Version="17.3.0" />
+    <PackageReference Include="microsoft.toolkit.highperformance" Version="7.1.2" />
+    <PackageReference Include="nunit" Version="3.13.3" />
+    <PackageReference Include="nunit3testadapter" Version="4.2.1" />
+    <PackageReference Include="nunit.analyzers" Version="3.3.0" />
+
+    <PackageReference Include="fluentassertions" Version="6.3.0" />
+
+    <PackageReference Include="matthiasffm.common" Version="1.5.0" />
+  </ItemGroup>
+
+  <!-- damit MS Test SDK keine Compilewarnungen wegen doppeltem Code wirft -->
+  <ItemGroup>
+    <Compile Remove="globalPackagesFolder\microsoft.net.test.sdk\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="day1.data">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

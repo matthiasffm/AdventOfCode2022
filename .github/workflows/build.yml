@@ -21,7 +21,7 @@ jobs:
         dotnet-quality: 'ga'
 
     - name: Restore .NET dependencies
-      run: dotnet restore
+      run: dotnet restore CSharp/aoc2022.csproj
 
     - name: Build .NET
       run: dotnet build CSharp/aoc2022.csproj --no-restore

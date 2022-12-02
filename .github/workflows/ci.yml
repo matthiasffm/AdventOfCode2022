@@ -1,0 +1,53 @@
+name: build .Net and Scala
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+        dotnet-quality: 'ga'
+
+    - name: Restore .NET dependencies
+      run: dotnet restore CSharp/aoc2022.csproj
+
+    - name: Build .NET
+      run: dotnet build CSharp/aoc2022.csproj --no-restore
+
+    - name: Test .NET
+      run: dotnet test CSharp/aoc2022.csproj --no-build --verbosity normal
+
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Cache sbt
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.sbt
+          ~/.ivy2/cache
+          ~/.coursier/cache/v1
+          ~/.cache/coursier/v1
+          ~/AppData/Local/Coursier/Cache/v1
+          ~/Library/Caches/Coursier/v1
+        key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
+
+    - name: Test Scala
+      working-directory: ./Scala
+      run: sbt test

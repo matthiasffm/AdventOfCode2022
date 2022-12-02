@@ -29,7 +29,7 @@ public class Day01
          };
         var elves = ParseData(data);
 
-        WriteLine("Day 01 -- Beispiele --");
+        WriteLine("Day 01 -- Samples --");
 
         Puzzle1(elves).Should().Be(7000 + 8000 + 9000);
         Puzzle2(elves).Should().Be(10000 + 7000 + 8000 + 9000 + 5000 + 6000);
@@ -41,7 +41,7 @@ public class Day01
         var data  = File.ReadAllLines(@"day1.data");
         var elves = ParseData(data);
 
-        WriteLine("Day 01 -- richtige Eingaben --");
+        WriteLine("Day 01 -- AoC input --");
 
         Puzzle1(elves).Should().Be(64929);
         Puzzle2(elves).Should().Be(193697);
@@ -61,7 +61,7 @@ public class Day01
     {
         var maxCal = elves.Max(e => e.Sum());
 
-        WriteLine($"  Antwort 1: Der Elf mit den meisten Kalorien trägt {maxCal} kcal.");
+        WriteLine($"  Puzzle 1: The most calories carried by an Elf is {maxCal}.");
         return maxCal;
     }
 
@@ -76,7 +76,7 @@ public class Day01
                            .Take(3)
                            .Sum();
 
-        WriteLine($"  Antwort 2: Die 3 Elfen mit den meisten Kalorien tragen zusammen {top3Cal} kcal.");
+        WriteLine($"  Puzzle 2: The sum of the calories carried by the top 3 Elves is {top3Cal}.");
         return top3Cal;
     }
 }

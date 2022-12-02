@@ -18,7 +18,7 @@ public class Day02
          };
         var matches = ParseData(data);
 
-        WriteLine("Day 02 -- Beispiele --");
+        WriteLine("Day 02 -- Samples --");
 
         Puzzle1(matches).Should().Be(8 + 1 + 6);
         Puzzle2(matches).Should().Be(4 + 1 + 7);
@@ -30,15 +30,15 @@ public class Day02
         var data    = File.ReadAllLines(@"day2.data");
         var matches = ParseData(data);
 
-        WriteLine("Day 02 -- richtige Eingaben --");
+        WriteLine("Day 02 -- AoC input --");
 
         Puzzle1(matches).Should().Be(11386);
         Puzzle2(matches).Should().Be(13600);
     }
 
     // encode the input data so choices of player 1 and player 2 are in 0..2 (0 = rock, 1 = paper, 2 = scissors)
-    private IEnumerable<(int, int)> ParseData(IEnumerable<string> data) =>
-        data.Select(d => (d[0] -'A', d[2] - 'X'));
+    private IEnumerable<(byte, byte)> ParseData(IEnumerable<string> data) =>
+        data.Select(d => ((byte)(d[0] -'A'), (byte)(d[2] - 'X')));
 
     // one Elf gives you an encrypted strategy guide: "The first column is what your opponent is going to play: A for Rock, B for Paper, and C for
     // Scissors." The second column, you reason, must be what you should play in response.
@@ -46,11 +46,11 @@ public class Day02
     // for a single round is the score for the shape you selected (1 for Rock, 2 for Paper, and 3 for Scissors) plus the score for the outcome of the
     // round (0 if you lost, 3 if the round was a draw, and 6 if you won).
     // Puzzle == What would your total score be if everything goes exactly according to your strategy guide?
-    private int Puzzle1(IEnumerable<(int, int)> matches)
+    private int Puzzle1(IEnumerable<(byte, byte)> matches)
     {
         var strategyScoringTotal = matches.Sum(m => Scoring(m.Item2, Result[m.Item1, m.Item2]));
 
-        WriteLine($"  Antwort 1: Die Strategie liefert den Gesamtscore {strategyScoringTotal}.");
+        WriteLine($"  Puzzle 1: The elfes incomplete strategy results in a total score of {strategyScoringTotal}.");
         return strategyScoringTotal;
     }
 
@@ -58,23 +58,23 @@ public class Day02
     // to lose, Y means you need to end the round in a draw, and Z means you need to win. Good luck!"
     // The total score is still calculated in the same way, but now you need to figure out what shape to choose so the round ends as indicated.
     // Puzzle == Following the Elf's now complete instructions, what would your total score be if everything goes exactly according to your strategy guide?
-    private static int Puzzle2(IEnumerable<(int, int)> matches)
+    private static int Puzzle2(IEnumerable<(byte, byte)> matches)
     {
-        var strategyScoringTotal = matches.Sum(m => Scoring(InverseResult[m.Item1, m.Item2], m.Item2 * 3));
+        var strategyScoringTotal = matches.Sum(m => Scoring(InverseResult[m.Item1, m.Item2], (byte)(m.Item2 * 3)));
 
-        WriteLine($"  Antwort 2: Die inverse Strategie liefert den Gesamtscore {strategyScoringTotal}.");
+        WriteLine($"  Puzzle 2: The elfes complete strategy results in a total score of {strategyScoringTotal}.");
         return strategyScoringTotal;
     }
 
-    private static int Scoring(int shape, int outcome) => (shape + 1) + outcome;
+    private static int Scoring(byte shape, byte outcome) => (shape + 1) + outcome;
 
     // precalc RPS winning matrix
     // row = choice player 1
     // col = choice player 2
     // result = outcome (0 = player 1 wins, 3 = draw, 6 = player 2 wins)
-    private static readonly int[,] Result = new int[3,3] {
-        { 3, 6, 0 },
-        { 0, 3, 6 },
+    private static readonly byte[,] Result = new byte[3,3] {
+        { 3, 6, 0 }, // remarks: every row is shifted by one col to the right
+        { 0, 3, 6 }, //          => ((col - row + 1) * 3) % 9
         { 6, 0, 3 },
     };
 
@@ -82,9 +82,9 @@ public class Day02
     // row = choice player 1
     // col = outcome (0 = player 1 wins, 1 = draw, 2 = player 2 wins)
     // result = choice player 2
-    private static readonly int[,] InverseResult = new int[3,3] {
-        { 2, 0, 1 },
-        { 0, 1, 2 },
+    private static readonly byte[,] InverseResult = new byte[3,3] {
+        { 2, 0, 1 }, // remarks: every row is shifted by one col to the left
+        { 0, 1, 2 }, //          => (col + row + 2) % 3
         { 1, 2, 0 },
     };
 }

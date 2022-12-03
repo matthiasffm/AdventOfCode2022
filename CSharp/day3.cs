@@ -4,7 +4,8 @@ using NUnit.Framework;
 using FluentAssertions;
 
 using static Console;
-
+using System.Collections;
+using matthiasffm.Common.Collections;
 [TestFixture]
 public class Day03
 {
@@ -45,20 +46,12 @@ public class Day03
     //           priorities of those item types?
     private int Puzzle1(IEnumerable<string> rucksacks)
     {
-        var sumPriorities = rucksacks.Select(r => IncorrectLetter(r))
-                                     .Sum(l => Priority(l));
+        var sumPriorities = rucksacks.Sum(r => FirstSetBit(ToBitArray(r.AsSpan().Slice(0, r.Length / 2 ))
+                                                           .And(
+                                                           ToBitArray(r.AsSpan().Slice(r.Length / 2, r.Length / 2 )))));
 
         WriteLine($"  Puzzle 1: The sum of all priorities for the misplaced items is {sumPriorities}.");
         return sumPriorities;
-    }
-
-    private static char IncorrectLetter(string rucksack)
-    {
-        var lettersMisplaced = rucksack.ToCharArray(0, rucksack.Length / 2)
-                                       .Intersect(rucksack.ToCharArray(rucksack.Length / 2, rucksack.Length / 2));
-        System.Diagnostics.Debug.Assert(lettersMisplaced.Count() == 1);
-
-        return lettersMisplaced.First();
     }
 
     // The Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For
@@ -76,21 +69,42 @@ public class Day03
         var sumPriorities = rucksacks.Where((r, i) => i % 3 == 0)
                                      .Zip(rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
                                      .Zip(rucksacks.Where((r, i) => i % 3 == 2), (r, r3) => (r.r1, r.r2, r3))
-                                     .Select(r => Badge(r.r1, r.r2, r.r3))
-                                     .Sum(l => Priority(l));
+                                     .Sum(r => FirstSetBit(ToBitArray(r.r1)
+                                                           .And(ToBitArray(r.r2))
+                                                           .And(ToBitArray(r.r3))));
 
         WriteLine($"  Puzzle 2: The sum of all priorities for the badges is {sumPriorities}.");
         return sumPriorities;
     }
 
-    private static char Badge(string rucksack1, string rucksack2, string rucksack3)
+    // converts letters to array of bits [1-53] where every set bit means a letter with this priority is present in letters
+    private static BitArray ToBitArray(ReadOnlySpan<char> letters)
     {
-        var badge = rucksack1.ToCharArray()
-                             .Intersect(rucksack2.ToCharArray())
-                             .Intersect(rucksack3.ToCharArray());
-        System.Diagnostics.Debug.Assert(badge.Count() == 1);
+        var arr = new BitArray(52 + 1);
 
-        return badge.First();
+        foreach(var l in letters)
+        {
+            arr.Set(Priority(l), true);
+        }
+
+        return arr;
+    }
+
+    // finds the index of the first set bit in bits (should be only one here in this puzzle)
+    private static int FirstSetBit(BitArray bits)
+    {
+        System.Diagnostics.Debug.Assert(bits.CountOnes() == 1);
+
+        for(int i = 0; i < bits.Length; i++)
+        {
+            if(bits[i])
+            {
+                return i;
+            }
+        }
+
+        System.Diagnostics.Debug.Fail("wrong!");
+        return -1;
     }
 
     private static int Priority(char letter) => char.IsLower(letter) ? letter - 'a' + 1 : letter - 'A' + 27;

@@ -90,6 +90,8 @@ public class Day03
         return arr;
     }
 
+    private static int Priority(char letter) => char.IsLower(letter) ? letter - 'a' + 1 : letter - 'A' + 27;
+
     // finds the index of the first set bit in bits (should be only one here in this puzzle)
     private static int FirstSetBit(BitArray bits)
     {
@@ -106,6 +108,4 @@ public class Day03
         System.Diagnostics.Debug.Fail("wrong!");
         return -1;
     }
-
-    private static int Priority(char letter) => char.IsLower(letter) ? letter - 'a' + 1 : letter - 'A' + 27;
 }

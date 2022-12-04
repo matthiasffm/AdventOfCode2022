@@ -40,23 +40,23 @@ public class Day04
         Puzzle2(pairs).Should().Be(956);
     }
 
-    private static IEnumerable<(Pair left, Pair right)> ParseData(IEnumerable<string> data)
+    private static IEnumerable<(Assignment left, Assignment right)> ParseData(IEnumerable<string> data)
         => data.Select(d => d.Split(','))
-               .Select(s => (new Pair(s[0]), new Pair(s[1])))
+               .Select(s => (new Assignment(s[0]), new Assignment(s[1])))
                .ToArray();
 
-    private record Pair(int min, int max)
+    private record Assignment(int min, int max)
     {
-        public Pair(string s) : this(int.Parse(s.Split('-')[0]), int.Parse(s.Split('-')[1])) {}
-        public bool FullyContains(Pair other) => min <= other.min && max >= other.max;
-        public bool Overlaps(Pair other) => min.Between(other.min, other.max) || other.min.Between(min, max);
+        public Assignment(string s) : this(int.Parse(s.Split('-')[0]), int.Parse(s.Split('-')[1])) {}
+        public bool FullyContains(Assignment other) => min <= other.min && max >= other.max;
+        public bool Overlaps(Assignment other) => min.Between(other.min, other.max) || other.min.Between(min, max);
     }
 
     // Elves have been assigned the job of cleaning up sections of the camp. Every section has a unique ID number, and
     // each Elf is assigned a range of section IDs. However, as some of the Elves compare their section assignments with
     // each other, they've noticed that many of the assignments overlap.
     // Puzzle == In how many assignment pairs does one range fully contain the other?
-    private int Puzzle1(IEnumerable<(Pair left, Pair right)> pairs)
+    private int Puzzle1(IEnumerable<(Assignment left, Assignment right)> pairs)
     {
         var fullyContains = pairs.Count(p => p.left.FullyContains(p.right) || p.right.FullyContains(p.left));
 
@@ -64,8 +64,8 @@ public class Day04
         return fullyContains;
     }
 
-    // Puzzle == In how many assignment pairs does one range fully contain the other?
-    private int Puzzle2(IEnumerable<(Pair left, Pair right)> pairs)
+    // Puzzle == In how many assignment pairs do the ranges overlap?
+    private int Puzzle2(IEnumerable<(Assignment left, Assignment right)> pairs)
     {
         var overlaps = pairs.Count(p => p.left.Overlaps(p.right));
 

@@ -12,7 +12,7 @@ class Day3Solver {
     // To help prioritize item rearrangement, every item type can be converted to a priority (= number of letter). 
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
-    def Puzzle1(rucksacks: Seq[String]) : Int = rucksacks.map(r => Priority(r.slice(0, r.length / 2).toSet
+    def puzzle1(rucksacks: Seq[String]) : Int = rucksacks.map(r => priority(r.slice(0, r.length / 2).toSet
                                                                             .intersect(r.slice(r.length / 2, r.length).toSet)
                                                                             .head))
                                                          .sum
@@ -25,14 +25,14 @@ class Day3Solver {
     // which item type is the right one is by finding the one that is common between all three Elves in each group.
     // Puzzle == Find the item type that corresponds to the badges of each three-Elf group. What is the sum of
     //           the priorities of those item types?
-    def Puzzle2(rucksacks: Seq[String]) : Int = rucksacks.grouped(3)
-                                                         .map(rg => Priority(rg(0).toSet
+    def puzzle2(rucksacks: Seq[String]) : Int = rucksacks.grouped(3)
+                                                         .map(rg => priority(rg(0).toSet
                                                                              .intersect(rg(1).toSet)
                                                                              .intersect(rg(2).toSet)
                                                                              .head))
                                                          .sum
 
-    def Priority(letter: Char) : Int = if(letter >= 'a') letter - 'a' + 1 else letter - 'A' + 27
+    def priority(letter: Char) : Int = if(letter >= 'a') letter - 'a' + 1 else letter - 'A' + 27
 }
 
 class Day3 extends AnyFlatSpec with should.Matchers {
@@ -46,27 +46,27 @@ class Day3 extends AnyFlatSpec with should.Matchers {
         "CrZsJsPPZsGzwwsLwLmpwMDw",
     ).toSeq
 
-    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/day3.data")
-                         .getLines
-                         .toSeq
-
     "Puzzle 1" should "sum the priorities of all misplaced items in the sample data" in {
         val day3 = new Day3Solver
-        day3.Puzzle1(sampleData) should be (16 + 38 +42 + 22 + 20 + 19)
+        day3.puzzle1(sampleData) should be (16 + 38 +42 + 22 + 20 + 19)
     }
 
     "Puzzle 2" should "sum the priorities of all badges in the sample data" in {
         val day3 = new Day3Solver
-        day3.Puzzle2(sampleData) should be (18 + 52)
+        day3.puzzle2(sampleData) should be (18 + 52)
     }
+
+    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/day3.data")
+                         .getLines
+                         .toSeq
 
     "Puzzle 1" should "sum the priorities of all misplaced items in the AoC data" in {
         val day3 = new Day3Solver
-        day3.Puzzle1(realData) should be (8394)
+        day3.puzzle1(realData) should be (8394)
     }
 
     "Puzzle 2" should "sum the priorities of all badges in the AoC data" in {
         val day3 = new Day3Solver
-        day3.Puzzle2(realData) should be (2413)
+        day3.puzzle2(realData) should be (2413)
     }
 }

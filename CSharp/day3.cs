@@ -6,6 +6,11 @@ using FluentAssertions;
 using static Console;
 using System.Collections;
 using matthiasffm.Common.Collections;
+
+// TODO: BitArray may be a bit excessive, a simple ulong should do it (only 52 bits needed) doesn't
+//       allocate any additional memory
+//       => benchark this!
+
 [TestFixture]
 public class Day03
 {

@@ -6,7 +6,7 @@ import matchers._
 
 class Day1Solver {
 
-    def Parse(data: Seq[String]) : Seq[Seq[Int]] = {
+    def parse(data: Seq[String]) : Seq[Seq[Int]] = {
         return data.map(s => s match {
                                         case "" => "#"
                                         case _  => s
@@ -22,13 +22,13 @@ class Day1Solver {
     // In case the Elves get hungry and need extra snacks, they need to know which Elf to ask: they'd like to know how many
     // Calories are being carried by the Elf carrying the most Calories.
     // Puzzle == find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
-    def Puzzle1(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).max
+    def puzzle1(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).max
 
     // By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories
     // of food might eventually run out of snacks. To avoid this unacceptable situation, the Elves would instead like to know the
     // total Calories carried by the top three Elves carrying the most Calories.
     // Puzzle == find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
-    def Puzzle2(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).sorted.takeRight(3).sum
+    def puzzle2(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).sorted.takeRight(3).sum
 }
 
 class Day1 extends AnyFlatSpec with should.Matchers {
@@ -46,31 +46,31 @@ class Day1 extends AnyFlatSpec with should.Matchers {
                        ""
     ).toSeq
 
-    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/day1.data")
-                         .getLines
-                         .toSeq
-
     "Puzzle 1" should "find the elf carrying the most calories in the sample data" in {
         val day1 = new Day1Solver
-        val elves = day1.Parse(sampleData);
-        day1.Puzzle1(elves) should be (24000)
+        val elves = day1.parse(sampleData);
+        day1.puzzle1(elves) should be (24000)
     }
 
     "Puzzle 2" should "find the top three elfs carrying the most calories in the sample data" in {
         val day1 = new Day1Solver
-        val elves = day1.Parse(sampleData);
-        day1.Puzzle2(elves) should be (45000)
+        val elves = day1.parse(sampleData);
+        day1.puzzle2(elves) should be (45000)
     }
+
+    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/day1.data")
+                         .getLines
+                         .toSeq
 
     "Puzzle 1" should "find the elf carrying the most calories in the AoC data" in {
         val day1 = new Day1Solver
-        val elves = day1.Parse(realData);
-        day1.Puzzle1(elves) should be (64929)
+        val elves = day1.parse(realData);
+        day1.puzzle1(elves) should be (64929)
     }
 
     "Puzzle 2" should "find the top three elfs carrying the most calories in the AoC data" in {
         val day1 = new Day1Solver
-        val elves = day1.Parse(realData);
-        day1.Puzzle2(elves) should be (193697)
+        val elves = day1.parse(realData);
+        day1.puzzle2(elves) should be (193697)
     }
 }

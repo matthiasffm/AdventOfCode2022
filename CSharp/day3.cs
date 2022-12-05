@@ -51,9 +51,9 @@ public class Day03
     //           priorities of those item types?
     private int Puzzle1(IEnumerable<string> rucksacks)
     {
-        var sumPriorities = rucksacks.Sum(r => FirstSetBit(ToBitArray(r.AsSpan().Slice(0, r.Length / 2 ))
-                                                           .And(
-                                                           ToBitArray(r.AsSpan().Slice(r.Length / 2, r.Length / 2 )))));
+        var sumPriorities = rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan().Slice(0, r.Length / 2 ))
+                                                           &
+                                                           ToUlong(r.AsSpan().Slice(r.Length / 2, r.Length / 2 ))));
 
         WriteLine($"  Puzzle 1: The sum of all priorities for the misplaced items is {sumPriorities}.");
         return sumPriorities;
@@ -74,43 +74,40 @@ public class Day03
         var sumPriorities = rucksacks.Where((r, i) => i % 3 == 0)
                                      .Zip(rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
                                      .Zip(rucksacks.Where((r, i) => i % 3 == 2), (r, r3) => (r.r1, r.r2, r3))
-                                     .Sum(r => FirstSetBit(ToBitArray(r.r1)
-                                                           .And(ToBitArray(r.r2))
-                                                           .And(ToBitArray(r.r3))));
+                                     .Sum(r => FirstSetBit(ToUlong(r.r1)
+                                                           & ToUlong(r.r2)
+                                                           & ToUlong(r.r3)));
 
         WriteLine($"  Puzzle 2: The sum of all priorities for the badges is {sumPriorities}.");
         return sumPriorities;
     }
 
-    // converts letters to array of bits [1-53] where every set bit means a letter with this priority is present in letters
-    private static BitArray ToBitArray(ReadOnlySpan<char> letters)
+    // converts letters to bits [1-53] where every set bit means a letter with this priority is present in letters
+    private static ulong ToUlong(ReadOnlySpan<char> letters)
     {
-        var arr = new BitArray(52 + 1);
+        ulong bits = 0L;
 
         foreach(var l in letters)
         {
-            arr.Set(Priority(l), true);
+            bits |= (ulong)(1L << Priority(l));
         }
 
-        return arr;
+        return bits;
     }
 
     private static int Priority(char letter) => char.IsLower(letter) ? letter - 'a' + 1 : letter - 'A' + 27;
 
-    // finds the index of the first set bit in bits (should be only one here in this puzzle)
-    private static int FirstSetBit(BitArray bits)
+    // finds the index of the first set bit (should be only one set bit here in this puzzle)
+    private static int FirstSetBit(ulong bits)
     {
-        System.Diagnostics.Debug.Assert(bits.CountOnes() == 1);
-
-        for(int i = 0; i < bits.Length; i++)
+        for(int i = 0; i < 60; i++)
         {
-            if(bits[i])
+            if((bits & (ulong)(1L << i)) != 0)
             {
                 return i;
             }
         }
 
-        System.Diagnostics.Debug.Fail("wrong!");
         return -1;
     }
 }

@@ -12,7 +12,7 @@ public class Day05
     [Test]
     public void TestSamples()
     {
-        var data = new [] { 
+        var data = new [] {
             "    [D]    ",
             "[N] [C]    ",
             "[Z] [M] [P]",

@@ -3,14 +3,6 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using static Console;
-using System.Collections;
-using matthiasffm.Common.Collections;
-
-// TODO: BitArray may be a bit excessive, a simple ulong should do it (only 52 bits needed) doesn't
-//       allocate any additional memory
-//       => benchark this!
-
 [TestFixture]
 public class Day03
 {
@@ -26,8 +18,6 @@ public class Day03
             "CrZsJsPPZsGzwwsLwLmpwMDw",
         };
 
-        WriteLine("Day 03 -- Samples --");
-
         Puzzle1(rucksacks).Should().Be(16 + 38 +42 + 22 + 20 + 19);
         Puzzle2(rucksacks).Should().Be(18 + 52);
     }
@@ -36,8 +26,6 @@ public class Day03
     public void TestAocInput()
     {
         var rucksacks = File.ReadAllLines(@"day3.data");
-
-        WriteLine("Day 03 -- AoC input --");
 
         Puzzle1(rucksacks).Should().Be(8394);
         Puzzle2(rucksacks).Should().Be(2413);
@@ -49,15 +37,10 @@ public class Day03
     // To help prioritize item rearrangement, every item type can be converted to a priority (= number of letter). 
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
-    private int Puzzle1(IEnumerable<string> rucksacks)
-    {
-        var sumPriorities = rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan().Slice(0, r.Length / 2 ))
-                                                           &
-                                                           ToUlong(r.AsSpan().Slice(r.Length / 2, r.Length / 2 ))));
-
-        WriteLine($"  Puzzle 1: The sum of all priorities for the misplaced items is {sumPriorities}.");
-        return sumPriorities;
-    }
+    private int Puzzle1(IEnumerable<string> rucksacks) =>
+        rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan().Slice(0, r.Length / 2 ))
+                                       &
+                                       ToUlong(r.AsSpan().Slice(r.Length / 2, r.Length / 2 ))));
 
     // The Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For
     // efficiency, within each group of three Elves, the badge is the only item type carried by all three Elves.
@@ -67,20 +50,13 @@ public class Day03
     // which item type is the right one is by finding the one that is common between all three Elves in each group.
     // Puzzle == Find the item type that corresponds to the badges of each three-Elf group. What is the sum of
     //           the priorities of those item types?
-    private int Puzzle2(IEnumerable<string> rucksacks)
-    {
-        System.Diagnostics.Debug.Assert(rucksacks.Count() % 3 == 0);
-
-        var sumPriorities = rucksacks.Where((r, i) => i % 3 == 0)
-                                     .Zip(rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
-                                     .Zip(rucksacks.Where((r, i) => i % 3 == 2), (r, r3) => (r.r1, r.r2, r3))
-                                     .Sum(r => FirstSetBit(ToUlong(r.r1)
-                                                           & ToUlong(r.r2)
-                                                           & ToUlong(r.r3)));
-
-        WriteLine($"  Puzzle 2: The sum of all priorities for the badges is {sumPriorities}.");
-        return sumPriorities;
-    }
+    private int Puzzle2(IEnumerable<string> rucksacks) =>
+        rucksacks.Where((r, i) => i % 3 == 0)
+                 .Zip(rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
+                 .Zip(rucksacks.Where((r, i) => i % 3 == 2), (r, r3) => (r.r1, r.r2, r3))
+                 .Sum(r => FirstSetBit(ToUlong(r.r1)
+                                       & ToUlong(r.r2)
+                                       & ToUlong(r.r3)));
 
     // converts letters to bits [1-53] where every set bit means a letter with this priority is present in letters
     private static ulong ToUlong(ReadOnlySpan<char> letters)

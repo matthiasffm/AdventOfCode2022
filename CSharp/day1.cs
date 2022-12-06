@@ -3,8 +3,6 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using static Console;
-
 [TestFixture]
 public class Day01
 {
@@ -29,8 +27,6 @@ public class Day01
          };
         var elves = ParseData(data);
 
-        WriteLine("Day 01 -- Samples --");
-
         Puzzle1(elves).Should().Be(7000 + 8000 + 9000);
         Puzzle2(elves).Should().Be(10000 + 7000 + 8000 + 9000 + 5000 + 6000);
     }
@@ -40,8 +36,6 @@ public class Day01
     {
         var data  = File.ReadAllLines(@"day1.data");
         var elves = ParseData(data);
-
-        WriteLine("Day 01 -- AoC input --");
 
         Puzzle1(elves).Should().Be(64929);
         Puzzle2(elves).Should().Be(193697);
@@ -57,26 +51,16 @@ public class Day01
     // In case the Elves get hungry and need extra snacks, they need to know which Elf to ask: they'd like to know how many
     // Calories are being carried by the Elf carrying the most Calories.
     // Puzzle == find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
-    private int Puzzle1(IEnumerable<IEnumerable<int>> elves)
-    {
-        var maxCal = elves.Max(e => e.Sum());
-
-        WriteLine($"  Puzzle 1: The most calories carried by an Elf is {maxCal}.");
-        return maxCal;
-    }
+    private int Puzzle1(IEnumerable<IEnumerable<int>> elves) =>
+        elves.Max(e => e.Sum());
 
     // By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories
     // of food might eventually run out of snacks. To avoid this unacceptable situation, the Elves would instead like to know the
     // total Calories carried by the top three Elves carrying the most Calories.
     // Puzzle == find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
-    private static int Puzzle2(IEnumerable<IEnumerable<int>> elves)
-    {
-        var top3Cal = elves.Select(e => e.Sum())
-                           .OrderDescending()
-                           .Take(3)
-                           .Sum();
-
-        WriteLine($"  Puzzle 2: The sum of the calories carried by the top 3 Elves is {top3Cal}.");
-        return top3Cal;
-    }
+    private static int Puzzle2(IEnumerable<IEnumerable<int>> elves) =>
+        elves.Select(e => e.Sum())
+             .OrderDescending()
+             .Take(3)
+             .Sum();
 }

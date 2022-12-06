@@ -3,7 +3,6 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using static Console;
 using matthiasffm.Common;
 
 [TestFixture]
@@ -24,8 +23,6 @@ public class Day05
             "move 1 from 1 to 2",
         };
 
-        WriteLine("Day 05 -- Samples --");
-
         var (stacks, moves) = ParseData(data);
         Puzzle1(stacks, moves).Should().Be("CMZ");
 
@@ -37,8 +34,6 @@ public class Day05
     public void TestAocInput()
     {
         var data = File.ReadAllLines(@"day5.data");
-
-        WriteLine("Day 05 -- AoC input --");
 
         var (stacks, moves) = ParseData(data);
         Puzzle1(stacks, moves).Should().Be("PSNRGBTFT");
@@ -80,10 +75,7 @@ public class Day05
         moves.For(move => 1.To(move.Count)
                            .For(m => stacks[move.To - 1].Push(stacks[move.From - 1].Pop())));
 
-        var topCrates = string.Concat(stacks.Select(s => s.Peek()));
-
-        WriteLine($"  Puzzle 1: The message on the top crates reads '{topCrates}'.");
-        return topCrates;
+        return TopCrates(stacks);
     }
 
     // The CrateMover 9001 is notable for many new and exciting features, especially the ability to pick up and move multiple
@@ -96,9 +88,8 @@ public class Day05
                            .Reverse()
                            .For(c => stacks[move.To - 1].Push(c)));
 
-        var topCrates = string.Concat(stacks.Select(s => s.Peek()));
-
-        WriteLine($"  Puzzle 2: The message on the top crates reads '{topCrates}'.");
-        return topCrates;
+        return TopCrates(stacks);
     }
+
+    private static string TopCrates(Stack<char>[] stacks) => string.Concat(stacks.Select(s => s.Peek()));
 }

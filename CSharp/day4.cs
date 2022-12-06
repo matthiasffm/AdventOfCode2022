@@ -3,7 +3,6 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using static Console;
 using matthiasffm.Common.Math;
 
 [TestFixture]
@@ -22,8 +21,6 @@ public class Day04
         };
         var pairs = ParseData(data);
 
-        WriteLine("Day 04 -- Samples --");
-
         Puzzle1(pairs).Should().Be(2);
         Puzzle2(pairs).Should().Be(4);
     }
@@ -33,8 +30,6 @@ public class Day04
     {
         var data = File.ReadAllLines(@"day4.data");
         var pairs = ParseData(data);
-
-        WriteLine("Day 04 -- AoC input --");
 
         Puzzle1(pairs).Should().Be(651);
         Puzzle2(pairs).Should().Be(956);
@@ -56,20 +51,10 @@ public class Day04
     // each Elf is assigned a range of section IDs. However, as some of the Elves compare their section assignments with
     // each other, they've noticed that many of the assignments overlap.
     // Puzzle == In how many assignment pairs does one range fully contain the other?
-    private int Puzzle1(IEnumerable<(Assignment left, Assignment right)> pairs)
-    {
-        var fullyContains = pairs.Count(p => p.left.FullyContains(p.right) || p.right.FullyContains(p.left));
-
-        WriteLine($"  Puzzle 1: {fullyContains} assignment pairs fully contain each other.");
-        return fullyContains;
-    }
+    private int Puzzle1(IEnumerable<(Assignment left, Assignment right)> pairs) =>
+        pairs.Count(p => p.left.FullyContains(p.right) || p.right.FullyContains(p.left));
 
     // Puzzle == In how many assignment pairs do the ranges overlap?
-    private int Puzzle2(IEnumerable<(Assignment left, Assignment right)> pairs)
-    {
-        var overlaps = pairs.Count(p => p.left.Overlaps(p.right));
-
-        WriteLine($"  Puzzle 2: {overlaps} assignment pairs overlap each other.");
-        return overlaps;
-    }
+    private int Puzzle2(IEnumerable<(Assignment left, Assignment right)> pairs) =>
+        pairs.Count(p => p.left.Overlaps(p.right));
 }

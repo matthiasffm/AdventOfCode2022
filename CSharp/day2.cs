@@ -3,8 +3,6 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using static Console;
-
 [TestFixture]
 public class Day02
 {
@@ -18,8 +16,6 @@ public class Day02
          };
         var matches = ParseData(data);
 
-        WriteLine("Day 02 -- Samples --");
-
         Puzzle1(matches).Should().Be(8 + 1 + 6);
         Puzzle2(matches).Should().Be(4 + 1 + 7);
     }
@@ -29,8 +25,6 @@ public class Day02
     {
         var data    = File.ReadAllLines(@"day2.data");
         var matches = ParseData(data);
-
-        WriteLine("Day 02 -- AoC input --");
 
         Puzzle1(matches).Should().Be(11386);
         Puzzle2(matches).Should().Be(13600);
@@ -46,25 +40,15 @@ public class Day02
     // for a single round is the score for the shape you selected (1 for Rock, 2 for Paper, and 3 for Scissors) plus the score for the outcome of the
     // round (0 if you lost, 3 if the round was a draw, and 6 if you won).
     // Puzzle == What would your total score be if everything goes exactly according to your strategy guide?
-    private int Puzzle1(IEnumerable<(byte, byte)> matches)
-    {
-        var strategyScoringTotal = matches.Sum(m => Scoring(m.Item2, Result[m.Item1, m.Item2]));
-
-        WriteLine($"  Puzzle 1: The elfes incomplete strategy results in a total score of {strategyScoringTotal}.");
-        return strategyScoringTotal;
-    }
+    private int Puzzle1(IEnumerable<(byte, byte)> matches) =>
+        matches.Sum(m => Scoring(m.Item2, Result[m.Item1, m.Item2]));
 
     // The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: X means you need
     // to lose, Y means you need to end the round in a draw, and Z means you need to win. Good luck!"
     // The total score is still calculated in the same way, but now you need to figure out what shape to choose so the round ends as indicated.
     // Puzzle == Following the Elf's now complete instructions, what would your total score be if everything goes exactly according to your strategy guide?
-    private static int Puzzle2(IEnumerable<(byte, byte)> matches)
-    {
-        var strategyScoringTotal = matches.Sum(m => Scoring(InverseResult[m.Item1, m.Item2], (byte)(m.Item2 * 3)));
-
-        WriteLine($"  Puzzle 2: The elfes complete strategy results in a total score of {strategyScoringTotal}.");
-        return strategyScoringTotal;
-    }
+    private static int Puzzle2(IEnumerable<(byte, byte)> matches) =>
+        matches.Sum(m => Scoring(InverseResult[m.Item1, m.Item2], (byte)(m.Item2 * 3)));
 
     private static int Scoring(byte shape, byte outcome) => (shape + 1) + outcome;
 

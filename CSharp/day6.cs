@@ -3,7 +3,6 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using static Console;
 using matthiasffm.Common;
 
 [TestFixture]
@@ -12,8 +11,6 @@ public class Day06
     [Test]
     public void TestSamples()
     {
-        WriteLine("Day 06 -- Samples --");
-
         Puzzle1("mjqjpqmgbljsphdztnvjfqwrcgsmlb").Should().Be(7);
         Puzzle1("bvwbjplbgvbhsrlpgdmjqwftvncz").Should().Be(5);
         Puzzle1("nppdvjthqldpwncqszvftbrmjlhg").Should().Be(6);
@@ -32,8 +29,6 @@ public class Day06
     {
         var signal = File.ReadAllText(@"day6.data");
 
-        WriteLine("Day 06 -- AoC input --");
-
         Puzzle1(signal).Should().Be(1640);
         Puzzle2(signal, 14).Should().Be(3613);
     }
@@ -41,15 +36,10 @@ public class Day06
     // To fix the Elves communication system, you need to add a subroutine to the device that detects a start-of-packet marker in the datastream. In
     // the protocol being used by the Elves, the start of a packet is indicated by a sequence of four characters that are all different.
     // Puzzle == How many characters need to be processed before the first start-of-packet marker is detected?
-    private int Puzzle1(string signal)
-    {
-        var sopMarkerPos = 3.To(signal.Length)
-                            .First(i => Test4Diff(signal.AsSpan().Slice(i - 3, 4)))
-                           + 1;
-
-        WriteLine($"  Puzzle 1: the first start-of-packet marker of 4 different letters is at position {sopMarkerPos}.");
-        return sopMarkerPos;
-    }
+    private int Puzzle1(string signal) =>
+        3.To(signal.Length)
+         .First(i => Test4Diff(signal.AsSpan().Slice(i - 3, 4)))
+         + 1;
 
     // tests if all 4 letters in toTest are different
     private static bool Test4Diff(ReadOnlySpan<char> toTest) =>
@@ -79,7 +69,6 @@ public class Day06
 
             if(!alphabet.Any(c => c > 1))
             {
-                WriteLine($"  Puzzle 2: the first start-of-message marker of {markerLength} different letters is at position {i}.");
                 return i;
             }
 

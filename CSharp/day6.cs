@@ -51,45 +51,43 @@ public class Day06
         return sopMarkerPos;
     }
 
-    // A start-of-message marker is just like a start-of-packet marker, except it consists of 14 distinct characters rather than 4.
-    // Puzzle == How many characters need to be processed before the first start-of-message marker is detected?
-    private int Puzzle2(string signal, int markerLength)
-    {
-        var msgMarkerPos = (markerLength - 1).To(signal.Length)
-                                             .First(i => TestNDiff(signal.AsSpan().Slice(i - markerLength + 1, markerLength)))
-                           + 1;
-
-        WriteLine($"  Puzzle 2: the first start-of-message marker of {markerLength} different letters is at position {msgMarkerPos}.");
-        return msgMarkerPos;
-    }
-
     // tests if all 4 letters in toTest are different
     private static bool Test4Diff(ReadOnlySpan<char> toTest) =>
         toTest[0] != toTest[1] && toTest[0] != toTest[2] && toTest[0] != toTest[3] &&
         toTest[1] != toTest[2] && toTest[1] != toTest[3] &&  
         toTest[2] != toTest[3]; 
 
-    private static readonly byte[] _charLookup = new byte[26];
-
-    // tests if all letters in toTest are different
-    // uses a character lookup array for all 26 different letters in the alphabet
-    private static bool TestNDiff(ReadOnlySpan<char> toTest)
+    // A start-of-message marker is just like a start-of-packet marker, except it consists of 14 distinct characters rather than 4.
+    // Puzzle == How many characters need to be processed before the first start-of-message marker is detected?
+    private int Puzzle2(string signal, int markerLength)
     {
-        for(int i = 0; i < toTest.Length; i++)
+        // uses a character lookup array for all 26 different letters in the alphabet
+        // maps: [letter of alphabet] -> number of occurences in sliding window of markerLength
+        // only has to update the first letter leaving the sliding window and the first
+        // letter entering the sliding window to update in the array
+
+        byte[] alphabet = new byte[26];
+
+        for(int i = 0; i < markerLength; i++)
         {
-            _charLookup[toTest[i] - 'a']++;
+            alphabet[signal[i] - 'a']++;
         }
 
-        bool alldiff = true;
-        for(int i = 0; i < 26; i++)
+        for(int i = markerLength; i < signal.Length; i++)
         {
-            if(_charLookup[i] > 1)
+            System.Diagnostics.Debug.Assert(alphabet.All(c => c >= 0));
+
+            if(!alphabet.Any(c => c > 1))
             {
-                alldiff = false;
+                WriteLine($"  Puzzle 2: the first start-of-message marker of {markerLength} different letters is at position {i}.");
+                return i;
             }
-            _charLookup[i] = 0;
+
+            alphabet[signal[i - markerLength] - 'a']--;
+            alphabet[signal[i] - 'a']++;
         }
 
-        return alldiff;
+        System.Diagnostics.Debug.Fail("no starrt-of-message marker found");
+        return -1;
     }
 }

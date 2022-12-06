@@ -28,22 +28,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\day1.data">
+    <Content Include="..\.input\day1.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\day2.data">
+    <Content Include="..\.input\day2.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\day3.data">
+    <Content Include="..\.input\day3.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\day4.data">
+    <Content Include="..\.input\day4.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\day5.data">
+    <Content Include="..\.input\day5.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\day6.data">
+    <Content Include="..\.input\day6.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

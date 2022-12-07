@@ -6,22 +6,15 @@ import matchers._
 
 class Day7Solver {
 
-    class Dir(val name: String, var dirs: List[Dir], val parent: Dir, var fileSizes: Int) {
-        def this(name: String) = {
-            this(name, List[Dir](), null, 0)
+    class Dir(var dirs: List[Dir], val parent: Dir, var fileSizes: Int) {
+        def this(parent: Dir) = {
+            this(List[Dir](), parent, 0)
         }
 
-        def this(name: String, parent: Dir) = {
-            this(name, List[Dir](), parent, 0)
-        }
-
-        def test() : Dir = {
-            return this
-        }
-
-        def addDir(name: String) : Dir = {
-            this.dirs = this.dirs :+ new Dir(name, this)
-            return this
+        def addDir() : Dir = {
+            val newDir = new Dir(this)
+            this.dirs = this.dirs :+ newDir
+            return newDir
         }
 
         def addFile(fileSize: Int) : Dir = {
@@ -35,19 +28,19 @@ class Day7Solver {
 
     def parseData(input: Seq[String]) : Dir = {
 
-        val root       = new Dir("root")
+        val root       = new Dir(null)
         var currentDir = root
 
-        // compared to c# solution here we ignore all file names and individual sizes, we only care about
-        // directory sizes and the directory tree (this may be a bit short sighted for the coming days but ...)
+        // compared to c# solution here we ignore all names and individual sizes, we only care about
+        // directory sizes and the directory structure (this may be a bit short sighted for the coming days but ...)
 
         for(line <- input.tail) {
             currentDir = line match {
                 case "$ ls"                 => currentDir
                 case "$ cd .."              => currentDir.parent
-                case s"$$ cd $dir"          => currentDir.dirs.filter(d => d.name == dir).head
+                case s"$$ cd $dir"          => currentDir.addDir()
 
-                case s"dir $dir"            => currentDir.addDir(dir)
+                case s"dir $dir"            => currentDir
                 case s"$size $file"         => currentDir.addFile(size.toInt)
             }
         }
@@ -101,13 +94,13 @@ class Day7 extends AnyFlatSpec with should.Matchers {
         "7214296 k",
     ).toSeq
 
-    "Puzzle 1" should "find how many characters need to be processed before the first start-of-packet marker is detected in the sample data" in {
+    "Puzzle 1" should "sum of the total sizes of directories <= 100000 in the sample data" in {
         val day7 = new Day7Solver
         var rootDir = day7.parseData(sampleData);
         day7.puzzle1(rootDir) should be (95437)
     }
 
-    "Puzzle 2" should "find how many characters need to be processed before the first start-of-message marker is detected in the sample data" in {
+    "Puzzle 2" should "find the smallest directory in the sample data that, if deleted, would free up enough space on the filesystem to run the update" in {
         val day7 = new Day7Solver
         var rootDir = day7.parseData(sampleData);
         day7.puzzle2(rootDir) should be (24933642)
@@ -117,13 +110,13 @@ class Day7 extends AnyFlatSpec with should.Matchers {
                          .getLines
                          .toSeq
 
-    "Puzzle 1" should "find how many characters need to be processed before the first start-of-packet marker is detected in the AoC data" in {
+    "Puzzle 1" should "sum of the total sizes of directories <= 100000 in the AoC data" in {
         val day7 = new Day7Solver
         var rootDir = day7.parseData(realData);
         day7.puzzle1(rootDir) should be (1792222)
     }
 
-    "Puzzle 2" should "find how many characters need to be processed before the first start-of-message marker is detected in the AoC data" in {
+    "Puzzle 2" should "find the smallest directory in the AoC data that, if deleted, would free up enough space on the filesystem to run the update" in {
         val day7 = new Day7Solver
         var rootDir = day7.parseData(realData);
         day7.puzzle2(rootDir) should be (1112963)

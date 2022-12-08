@@ -48,20 +48,52 @@ public class Day08
     // Puzzle == Consider your map; how many trees are visible from outside the grid?
     private int Puzzle1(byte[,] trees)
     {
-        // TODO: too slow O(n*n*n)
-        //       precalc 4 lookop matrices which contain the rolling max for every direction on every position in O(n*n)
-        return trees.Select((t, r, c) => IsVisible(trees, t, r, c))
-                    .Sum();
-    }
+        // compute visibility of the inner trees without the border (border is always visible) separately on all 4 axis
+        // by using a rolling maximum value from each border
+        // O(4*n*n) time, O(n*n) space
 
-    private int IsVisible(byte[,] trees, byte tree, int row, int col) =>
-        row == 0 || col == 0 || row == trees.GetLength(0) - 1 || col == trees.GetLength(1) - 1 ||
-        trees.Row(row).Take(col).All(c => c.Item2 < tree) ||
-        trees.Row(row).Skip(col + 1).All(c => c.Item2 < tree) ||
-        trees.Col(col).Take(row).All(r => r.Item2 < tree) ||
-        trees.Col(col).Skip(row + 1).All(r => r.Item2 < tree)
-        ?
-        1 : 0;
+        var visibility  = new bool[trees.GetLength(0), trees.GetLength(1)];
+        visibility.Populate((r, c) => false);
+
+        for(int row = 1; row < trees.GetLength(0) - 1; row++)
+        {
+            byte maxFromLeft = trees[row, 0];
+            for(int col = 1; col < trees.GetLength(1) - 1; col++)
+            {
+                visibility[row, col] |= maxFromLeft < trees[row, col];
+                maxFromLeft = Math.Max(maxFromLeft, trees[row, col]);
+            }
+
+            byte maxFromRight = trees[row, trees.GetLength(1) - 1];
+            for(int col = trees.GetLength(1) - 2; col > 0; col--)
+            {
+                visibility[row, col] |= maxFromRight < trees[row, col];
+                maxFromRight = Math.Max(maxFromRight, trees[row, col]);
+            }
+        }
+
+        for(int col = 1; col < trees.GetLength(1) - 1; col++)
+        {
+            byte maxFromTop  = trees[0, col];
+            for(int row = 1; row < trees.GetLength(0) - 1; row++)
+            {
+                visibility[row, col] |= maxFromTop < trees[row, col];
+                maxFromTop = Math.Max(maxFromTop, trees[row, col]);
+            }
+
+            byte maxFromBottom = trees[trees.GetLength(1) - 1, col];
+            for(int row = trees.GetLength(0) - 2; row > 0; row--)
+            {
+                visibility[row, col] |= maxFromBottom < trees[row, col];
+                maxFromBottom = Math.Max(maxFromBottom, trees[row, col]);
+            }
+        }
+
+        // count visible inner trees and add guaranteed visible border trees
+
+        return trees.Count((t, r, c) => visibility[r, c]) +
+                                        (trees.GetLength(0) + trees.GetLength(1)) * 2 - 4;
+    }
 
     // The Elves just need to know the best spot to build their tree house: they would like to be able to see a lot of trees.
     // To measure the viewing distance from a given tree, look up, down, left, and right from that tree; stop if you reach an
@@ -70,32 +102,78 @@ public class Day08
     // Puzzle == What is the highest scenic score possible for any tree?
     private int Puzzle2(byte[,] trees)
     {
-        // TODO: too slow O(n*n*n)
-        //       precalc 4 lookop matrices which contain the rolling lenght of local downramps for every direction on every position in O(n*n)
-        return trees.Select((t, r, c) => ScenicScore(trees, t, r, c))
-                    .Max();
-    }
+        // compute viewing distances separately on all 4 axis by scanning the heights from each border
+        // for this we use a lookup array with tree_height -> closest tree with this height
+        // for every tree we have to just find the closest index > current tree height in this array (less than 10 comparisons)
+        // scenicScore[border] == 0 so we dont loop over it, just init the scenicScore with 0 at the beginning
+        // O(4*n*n*height) time, O(n*n + height) space with height = 0..9
 
-    private int ScenicScore(byte[,] trees, byte tree, int row, int col) =>
-        ViewingDistance(tree, trees.Row(row).Take(col).Reverse()) *
-        ViewingDistance(tree, trees.Row(row).Skip(col + 1)) *
-        ViewingDistance(tree, trees.Col(col).Take(row).Reverse()) *
-        ViewingDistance(tree, trees.Col(col).Skip(row + 1));
+        var scenicScore  = new int[trees.GetLength(0), trees.GetLength(1)];
+        scenicScore.Populate((r, c) => 0);
 
-    private int ViewingDistance(byte tree, IEnumerable<(int, byte)> lineOfSight)
-    {
-        var scenicScore = 0;
+        var lastIdxForHeight = new int[10];
 
-        foreach(var loS in lineOfSight)
+        for(int row = 1; row < trees.GetLength(0) - 1; row++)
         {
-            scenicScore++;
-
-            if(loS.Item2 >= tree)
+            Array.Fill(lastIdxForHeight, 0);
+            for(int col = 1; col < trees.GetLength(1) - 1; col++)
             {
-                break;
+                scenicScore[row, col] = DistanceLeft(lastIdxForHeight, trees[row, col], col);
+                lastIdxForHeight[trees[row, col]] = col;
+            }
+
+            Array.Fill(lastIdxForHeight, trees.GetLength(1) -1);
+            for(int col = trees.GetLength(1) - 1; col > 0; col--)
+            {
+                scenicScore[row, col] *= DistanceRight(lastIdxForHeight, trees[row, col], col);
+                lastIdxForHeight[trees[row, col]] = col;
             }
         }
 
-        return scenicScore;
+        for(int col = 1; col < trees.GetLength(1) - 1; col++)
+        {
+            Array.Fill(lastIdxForHeight, 0);
+            for(int row = 1; row < trees.GetLength(0) - 1; row++)
+            {
+                scenicScore[row, col] *= DistanceLeft(lastIdxForHeight, trees[row, col], row);
+                lastIdxForHeight[trees[row, col]] = row;
+            }
+
+            Array.Fill(lastIdxForHeight, trees.GetLength(0) -1);
+            for(int row = trees.GetLength(0) - 1; row > 0; row--)
+            {
+                scenicScore[row, col] *= DistanceRight(lastIdxForHeight, trees[row, col], row);
+                lastIdxForHeight[trees[row, col]] = row;
+            }
+        }
+
+        return scenicScore.Select((t, r, c) => t)
+                          .Max();
+    }
+
+    // find the closest treeheight to pos in the lookup array where the height >= tree
+    // we look from the left (or top) so closest == max index
+    private static int DistanceLeft(int[] heightIdx, byte tree, int pos)
+    {
+        int max = 0;
+        for(int i = tree; i < 10; i++)
+        {
+            max = Math.Max(max, heightIdx[i]);
+        }
+
+        return pos - max;
+    }
+
+    // find the closest treeheight to pos in the lookup array where the height >= tree
+    // we look from the right (or bottom) so closest == min index
+    private static int DistanceRight(int[] heightIdx, byte tree, int pos)
+    {
+        int min = int.MaxValue;
+        for(int i = tree; i < 10; i++)
+        {
+            min = Math.Min(min, heightIdx[i]);
+        }
+
+        return min - pos;
     }
 }

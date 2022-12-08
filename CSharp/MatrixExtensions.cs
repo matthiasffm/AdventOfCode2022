@@ -17,4 +17,32 @@ public static class MatrixExtensions
             yield return (row, matrix[row, col]);
         }
     }
+
+    /// <summary>
+    /// Zählt alle Elemente der Matrix die eine Bedingung erfüllen.
+    /// </summary>
+    /// <typeparam name="TSource">Elementtyp der Matrix</typeparam>
+    /// <param name="matrix">Matrix deren Elemente spalten- und dann zeilenweise iteriert werden.</param>
+    /// <param name="predicate">die Entscheidungsfunktion wird für jedes Element der Matrix aufgerufen</param>
+    /// <returns>Anzahl an Elementen in der Matrix, für die <paramref name="predicate"/> <i>true</i> liefert.</returns>
+    public static int Count<TSource>(this TSource[,] matrix, Func<TSource, int, int, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+        ArgumentNullException.ThrowIfNull(predicate);
+
+        var count = 0;
+
+        for(int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for(int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if(predicate(matrix[i, j], i, j))
+                {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
 }

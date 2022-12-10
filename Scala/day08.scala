@@ -75,7 +75,7 @@ class Day8 extends AnyFlatSpec with should.Matchers {
         day8.puzzle2(trees) should be (8)
     }
 
-    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/.input/day8.data")
+    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/.input/day08.data")
                          .getLines
                          .toArray
 

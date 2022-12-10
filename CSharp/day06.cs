@@ -27,7 +27,7 @@ public class Day06
     [Test]
     public void TestAocInput()
     {
-        var signal = File.ReadAllText(@"day6.data");
+        var signal = FileUtils.ReadAllLines(this)[0];
 
         Puzzle1(signal).Should().Be(1640);
         Puzzle2(signal, 14).Should().Be(3613);
@@ -55,6 +55,8 @@ public class Day06
         // maps: [letter of alphabet] -> number of occurences in sliding window of markerLength
         // only has to update the first letter leaving the sliding window and the first
         // letter entering the sliding window to update in the array
+
+        // TODO: only update leaving and entering letter in sliding window => O(n)
 
         byte[] alphabet = new byte[26];
 

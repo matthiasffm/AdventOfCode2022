@@ -40,7 +40,7 @@ public class Day10
     [Test]
     public void TestAocInput()
     {
-        var instructions = File.ReadAllLines(@"day10.data");
+        var instructions = FileUtils.ReadAllLines(this);
 
         Puzzle1(instructions).Should().Be(14860);
         Puzzle2(instructions).Should().BeEquivalentTo(new [] {

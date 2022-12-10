@@ -60,7 +60,7 @@ public class Day09
     [Test]
     public void TestAocInput()
     {
-        var moves = File.ReadAllLines(@"day9.data").Select(l => ParseMove(l));
+        var moves = FileUtils.ParseByLine(this, (l, i) => ParseMove(l));
 
         Puzzle(moves, 2).Should().Be(6745);
         Puzzle(moves, 10).Should().Be(2793);

@@ -33,7 +33,7 @@ public class Day05
     [Test]
     public void TestAocInput()
     {
-        var data = File.ReadAllLines(@"day5.data");
+        var data = FileUtils.ReadAllLines(this);
 
         var (stacks, moves) = ParseData(data);
         Puzzle1(stacks, moves).Should().Be("PSNRGBTFT");

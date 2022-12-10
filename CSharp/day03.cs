@@ -25,7 +25,7 @@ public class Day03
     [Test]
     public void TestAocInput()
     {
-        var rucksacks = File.ReadAllLines(@"day3.data");
+        var rucksacks = FileUtils.ReadAllLines(this);
 
         Puzzle1(rucksacks).Should().Be(8394);
         Puzzle2(rucksacks).Should().Be(2413);

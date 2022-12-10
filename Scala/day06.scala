@@ -36,7 +36,7 @@ class Day6 extends AnyFlatSpec with should.Matchers {
         day6.puzzle("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 14) should be (26)
     }
 
-    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/.input/day6.data")
+    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/.input/day06.data")
                          .getLines
                          .mkString
 

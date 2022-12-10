@@ -1,7 +1,6 @@
 namespace AdventOfCode2022;
 
 using System.Collections;
-using matthiasffm.Common.Collections;
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
@@ -12,8 +11,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var summary = BenchmarkRunner.Run<BenchmarkDay3>(ManualConfig.CreateMinimumViable()
-                                                                     .WithOptions(ConfigOptions.DisableOptimizationsValidator));
+        // var summary = BenchmarkRunner.Run<BenchmarkDay3>(ManualConfig.CreateMinimumViable()
+        //                                                              .WithOptions(ConfigOptions.DisableOptimizationsValidator));
     }
 }
 

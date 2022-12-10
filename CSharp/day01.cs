@@ -34,7 +34,7 @@ public class Day01
     [Test]
     public void TestAocInput()
     {
-        var data  = File.ReadAllLines(@"day1.data");
+        var data  = FileUtils.ReadAllLines(this);
         var elves = ParseData(data);
 
         Puzzle1(elves).Should().Be(64929);

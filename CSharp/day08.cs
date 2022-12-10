@@ -34,7 +34,7 @@ public class Day08
     [Test]
     public void TestAocInput()
     {
-        var data = File.ReadAllLines(@"day8.data");
+        var data  = FileUtils.ReadAllLines(this);
         var trees = ParseData(data);
 
         Puzzle1(trees).Should().Be(1717);

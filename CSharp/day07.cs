@@ -102,7 +102,7 @@ public class Day07
     [Test]
     public void TestAocInput()
     {
-        var data = File.ReadAllLines(@"day7.data");
+        var data = FileUtils.ReadAllLines(this);
         var rootDir = ParseData(data);
 
         Puzzle1(rootDir).Should().Be(1792222L);

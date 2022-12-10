@@ -23,7 +23,7 @@ public class Day02
     [Test]
     public void TestAocInput()
     {
-        var data    = File.ReadAllLines(@"day2.data");
+        var data    = FileUtils.ReadAllLines(this);
         var matches = ParseData(data);
 
         Puzzle1(matches).Should().Be(11386);

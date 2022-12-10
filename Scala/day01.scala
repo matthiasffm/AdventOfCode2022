@@ -58,7 +58,7 @@ class Day1 extends AnyFlatSpec with should.Matchers {
         day1.puzzle2(elves) should be (45000)
     }
 
-    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/.input/day1.data")
+    val realData = Source.fromFile(new java.io.File(new java.io.File(".").getCanonicalPath).getParent() + "/.input/day01.data")
                          .getLines
                          .toSeq
 

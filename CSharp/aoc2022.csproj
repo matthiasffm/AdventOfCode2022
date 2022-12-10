@@ -28,31 +28,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\.input\day1.data">
+    <Content Include="..\.input\day01.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day2.data">
+    <Content Include="..\.input\day02.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day3.data">
+    <Content Include="..\.input\day03.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day4.data">
+    <Content Include="..\.input\day04.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day5.data">
+    <Content Include="..\.input\day05.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day6.data">
+    <Content Include="..\.input\day06.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day7.data">
+    <Content Include="..\.input\day07.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day8.data">
+    <Content Include="..\.input\day08.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\.input\day9.data">
+    <Content Include="..\.input\day09.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\.input\day10.data">

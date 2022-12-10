@@ -55,7 +55,7 @@ public class Day08
         var visibility  = new bool[trees.GetLength(0), trees.GetLength(1)];
         visibility.Populate((r, c) => false);
 
-        for(int row = 1; row < trees.GetLength(0) - 1; row++)
+        Parallel.For(1, trees.GetLength(0) - 1, row =>
         {
             byte maxFromLeft = trees[row, 0];
             for(int col = 1; col < trees.GetLength(1) - 1; col++)
@@ -70,9 +70,9 @@ public class Day08
                 visibility[row, col] |= maxFromRight < trees[row, col];
                 maxFromRight = Math.Max(maxFromRight, trees[row, col]);
             }
-        }
+        });
 
-        for(int col = 1; col < trees.GetLength(1) - 1; col++)
+        Parallel.For(1, trees.GetLength(1) - 1, col =>
         {
             byte maxFromTop  = trees[0, col];
             for(int row = 1; row < trees.GetLength(0) - 1; row++)
@@ -87,7 +87,7 @@ public class Day08
                 visibility[row, col] |= maxFromBottom < trees[row, col];
                 maxFromBottom = Math.Max(maxFromBottom, trees[row, col]);
             }
-        }
+        });
 
         // count visible inner trees and add guaranteed visible border trees
 
@@ -111,10 +111,10 @@ public class Day08
         var scenicScore  = new int[trees.GetLength(0), trees.GetLength(1)];
         scenicScore.Populate((r, c) => 0);
 
-        var lastIdxForHeight = new int[10];
-
-        for(int row = 1; row < trees.GetLength(0) - 1; row++)
+        Parallel.For(1, trees.GetLength(0) - 1, row =>
         {
+            var lastIdxForHeight = new int[10];
+
             Array.Fill(lastIdxForHeight, 0);
             for(int col = 1; col < trees.GetLength(1) - 1; col++)
             {
@@ -128,10 +128,12 @@ public class Day08
                 scenicScore[row, col] *= DistanceRight(lastIdxForHeight, trees[row, col], col);
                 lastIdxForHeight[trees[row, col]] = col;
             }
-        }
+        });
 
-        for(int col = 1; col < trees.GetLength(1) - 1; col++)
+        Parallel.For(1, trees.GetLength(1) - 1, col =>
         {
+            var lastIdxForHeight = new int[10];
+
             Array.Fill(lastIdxForHeight, 0);
             for(int row = 1; row < trees.GetLength(0) - 1; row++)
             {
@@ -145,7 +147,7 @@ public class Day08
                 scenicScore[row, col] *= DistanceRight(lastIdxForHeight, trees[row, col], row);
                 lastIdxForHeight[trees[row, col]] = row;
             }
-        }
+        });
 
         return scenicScore.Select((t, r, c) => t)
                           .Max();

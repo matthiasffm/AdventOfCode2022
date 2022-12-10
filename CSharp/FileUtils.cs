@@ -4,7 +4,7 @@ public static class FileUtils
 {
     public static string[] ReadAllLines<T>(T day)
     {
-        return File.ReadAllLines(typeof(T).Name + ".data");
+        return File.ReadAllLines(typeof(T).Name.ToLower() + ".data");
     }
 
     public static TResult[] ParseByLine<T, TResult>(T day, Func<string, int, TResult> converter)

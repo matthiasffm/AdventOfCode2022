@@ -3,6 +3,9 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+using System.Text;
+using Iced.Intel;
+
 [TestFixture]
 public class Day10
 {
@@ -26,15 +29,16 @@ public class Day10
             "noop", "addx -10", "noop", "noop", "addx 20", "addx 1", "addx 2", "addx 2", "addx -6", "addx -11",
             "noop", "noop", "noop",
         };
+
         Puzzle1(instructions).Should().Be(13140);
-        Puzzle2(instructions).Should().BeEquivalentTo(new [] {
-            "##..##..##..##..##..##..##..##..##..##..",
-            "###...###...###...###...###...###...###.",
-            "####....####....####....####....####....",
-            "#####.....#####.....#####.....#####.....",
-            "######......######......######......####",
-            "#######.......#######.......#######.....",
-        });
+        Puzzle2(instructions).Should().Be("""
+            ##..##..##..##..##..##..##..##..##..##..
+            ###...###...###...###...###...###...###.
+            ####....####....####....####....####....
+            #####.....#####.....#####.....#####.....
+            ######......######......######......####
+            #######.......#######.......#######.....
+            """);
     }
 
     [Test]
@@ -43,14 +47,14 @@ public class Day10
         var instructions = FileUtils.ReadAllLines(this);
 
         Puzzle1(instructions).Should().Be(14860);
-        Puzzle2(instructions).Should().BeEquivalentTo(new [] {
-            "###...##..####.####.#..#.#..#.###..#..#.",
-            "#..#.#..#....#.#....#..#.#..#.#..#.#.#..",
-            "#..#.#......#..###..####.#..#.#..#.##...",
-            "###..#.##..#...#....#..#.#..#.###..#.#..",
-            "#.#..#..#.#....#....#..#.#..#.#.#..#.#..",
-            "#..#..###.####.####.#..#..##..#..#.#..#.",
-        }); // RGZEHURK
+        Puzzle2(instructions).Should().Be("""
+            ###...##..####.####.#..#.#..#.###..#..#.
+            #..#.#..#....#.#....#..#.#..#.#..#.#.#..
+            #..#.#......#..###..####.#..#.#..#.##...
+            ###..#.##..#...#....#..#.#..#.###..#.#..
+            #.#..#..#.#....#....#..#.#..#.#.#..#.#..
+            #..#..###.####.####.#..#..##..#..#.#..#.
+            """); // RGZEHURK
     }
 
     // The communication device's video system seems to be some kind of cathode-ray tube screen and simple CPU that are both driven by a precise clock circuit. The clock circuit
@@ -59,7 +63,7 @@ public class Day10
     // 'noop' takes one cycle to complete. It has no other effect.
     // Puzzle == Consider the signal strength (the cycle number multiplied by the value of the X register) _during_ the 20th cycle and every 40 cycles after that.
     //           What is the sum of these six signal strengths?
-    private int Puzzle1(string[] instructions)
+    private static int Puzzle1(string[] instructions)
     {
         var x     = 1;
         var clock = 0;
@@ -68,28 +72,21 @@ public class Day10
         foreach(var instruction in instructions)
         {
             clock++;
-            sum = Sum(clock, sum, x);
+            sum += SignalStrength(clock, x);
 
             if(instruction.StartsWith("addx"))
             {
                 clock++;
-                sum = Sum(clock, sum, x);
-                x += int.Parse(instruction.AsSpan().Slice(5));
+                sum += SignalStrength(clock, x);
+
+                x += int.Parse(instruction.AsSpan()[5..]);
             }
         }
 
         return sum;
     }
 
-    private int Sum(int clock, int sum, int x)
-    {
-        if((clock == 20) || ((clock + 20) % 40 == 0))
-        {
-            sum += x * clock;
-        }
-
-        return sum;
-    }
+    private static int SignalStrength(int clock, int x) => (clock + 20) % 40 == 0 ? x * clock : 0;
 
     // It seems like the X register controls the horizontal position of a sprite on the CRT. Specifically, the sprite is 3 pixels wide, and the X register sets the
     // horizontal position of the middle of that sprite. The CRT is 40 wide and 6 high. This CRT screen draws the top row of pixels left-to-right, then the row below
@@ -98,46 +95,35 @@ public class Day10
     // pixel is drawn. If the sprite is positioned such that one of its three pixels is the pixel currently being drawn, the screen produces a lit pixel (#);
     // otherwise, the screen leaves the pixel dark (.).
     // Puzzle == Render the image given by your program. What eight capital letters appear on your CRT?
-    private string[] Puzzle2(string[] instructions)
+    private static string Puzzle2(string[] instructions)
     {
         var spritePos = 1;
         var clock     = 0;
 
-        var screen = new List<char>(40 * 6);
+        var screen = new StringBuilder(40 * 6);
 
         foreach(var instruction in instructions)
         {
             clock++;
-            RaceTheBeam(clock, spritePos, screen);
+            screen = RaceTheBeam(clock, spritePos, screen);
 
             if(instruction.StartsWith("addx"))
             {
                 clock++;
-                RaceTheBeam(clock, spritePos, screen);
-                spritePos += int.Parse(instruction.AsSpan().Slice(5));
+                screen = RaceTheBeam(clock, spritePos, screen);
+                spritePos += int.Parse(instruction.AsSpan()[5..]);
             }
         }
 
-        return string.Concat(screen)
-                     .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        return screen.ToString();
     }
 
-    private void RaceTheBeam(int pc, int spritePos, List<char> screen)
-    {
-        var rasterX = (pc - 1) % 40; // screen index is 1 based
+    private static StringBuilder RaceTheBeam(int pc, int spritePos, StringBuilder screen) =>
+        screen.Append(NextPixel((pc - 1) % 40, spritePos))  // screen index is 1 based
+              .Append(HBlanc(pc));
 
-        if(rasterX >= (spritePos - 1) && rasterX <= (spritePos + 1))
-        {
-            screen.Add('#');
-        }
-        else
-        {
-             screen.Add('.');
-        }
+    private static char NextPixel(int screenX, int spritePos) =>
+        screenX >= (spritePos - 1) && screenX <= (spritePos + 1) ? '#' : '.';
 
-        if(rasterX == 39)
-        {
-            screen.Add('\n');
-        }
-    }
+    private static string HBlanc(int pc) => (pc % 40 == 0 && pc < 240) ? Environment.NewLine : string.Empty;
 }

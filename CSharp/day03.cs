@@ -37,8 +37,8 @@ public class Day03
     // To help prioritize item rearrangement, every item type can be converted to a priority (= number of letter). 
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
-    private int Puzzle1(IEnumerable<string> rucksacks) =>
-        rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan().Slice(0, r.Length / 2 ))
+    private static int Puzzle1(IEnumerable<string> rucksacks) =>
+        rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan()[..(r.Length / 2)])
                                        &
                                        ToUlong(r.AsSpan().Slice(r.Length / 2, r.Length / 2 ))));
 
@@ -50,7 +50,7 @@ public class Day03
     // which item type is the right one is by finding the one that is common between all three Elves in each group.
     // Puzzle == Find the item type that corresponds to the badges of each three-Elf group. What is the sum of
     //           the priorities of those item types?
-    private int Puzzle2(IEnumerable<string> rucksacks) =>
+    private static int Puzzle2(IEnumerable<string> rucksacks) =>
         rucksacks.Where((r, i) => i % 3 == 0)
                  .Zip(rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
                  .Zip(rucksacks.Where((r, i) => i % 3 == 2), (r, r3) => (r.r1, r.r2, r3))

@@ -12,9 +12,9 @@ public class Day09
 {
     private record Move(Vec2<int> Direction, int Repeat);
 
-    private Move ParseMove(string l)
+    private static Move ParseMove(string l)
     {
-        int dist = int.Parse(l.AsSpan().Slice(2));
+        int dist = int.Parse(l.AsSpan()[2..]);
 
         return l[0] switch {
             'L' => new Move(new Vec2<int>(-1, 0), dist),
@@ -67,14 +67,14 @@ public class Day09
     }
 
     // moves a knot if it is not close enough (d > 1)
-    private Vec2<int> MoveKnot(Vec2<int> knot, Vec2<int> diff) =>
+    private static Vec2<int> MoveKnot(Vec2<int> knot, Vec2<int> diff) =>
         Abs(diff.X) > 1 || Abs(diff.Y) > 1 ?
             new Vec2<int>(knot.X + Min(1, Abs(diff.X)) * Sign(diff.X),
                           knot.Y + Min(1, Abs(diff.Y)) * Sign(diff.Y)) :
             knot;
 
     // add move to head and then reposition all other knots in the rope
-    private void MoveRope(Vec2<int>[] rope, Vec2<int> move)
+    private static void MoveRope(Vec2<int>[] rope, Vec2<int> move)
     {
         rope[0] = rope.First() + move;
 
@@ -88,7 +88,7 @@ public class Day09
     // tail, the tail is pulled toward the head. All elements of the rope from head to tail must always be touching at every single move (diagonally adjacent
     // and even overlapping both count as touching). After simulating the ropes moves, you can count up all of the positions the tail visited at least once.
     // Puzzle == Simulate the series of motions. How many positions does the tail of the rope visit at least once?
-    private int Puzzle(IEnumerable<Move> moves, int ropeLength)
+    private static int Puzzle(IEnumerable<Move> moves, int ropeLength)
     {
         var rope        = Enumerable.Repeat(new Vec2<int>(0, 0), ropeLength).ToArray();
         var tailVisited = new [] { rope.Last() }.ToHashSet();

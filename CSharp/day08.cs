@@ -8,7 +8,7 @@ using matthiasffm.Common.Math;
 [TestFixture]
 public class Day08
 {
-    private byte[,] ParseData(string[] lines)
+    private static byte[,] ParseData(string[] lines)
     {
         var trees = new byte[lines.Length, lines[0].Length];
         trees.Populate((r, c) => (byte)(lines[r][c] - '0'));
@@ -46,7 +46,7 @@ public class Day08
     // A tree is visible if all of the other trees between it and an edge of the grid are shorter than it. Only consider trees in
     // the same row or column; that is, only look up, down, left, or right from any given tree.
     // Puzzle == Consider your map; how many trees are visible from outside the grid?
-    private int Puzzle1(byte[,] trees)
+    private static int Puzzle1(byte[,] trees)
     {
         // compute visibility of the inner trees without the border (border is always visible) separately on all 4 axis
         // by using a rolling maximum value from each border
@@ -100,7 +100,7 @@ public class Day08
     // edge or at the first tree that is the same height or taller than the tree under consideration. (so a tree on the edge == 0)
     // A tree's scenic score is found by multiplying together its viewing distance in each of the four directions.
     // Puzzle == What is the highest scenic score possible for any tree?
-    private int Puzzle2(byte[,] trees)
+    private static int Puzzle2(byte[,] trees)
     {
         // compute viewing distances separately on all 4 axis by scanning the heights from each border
         // for this we use a lookup array with tree_height -> closest tree with this height

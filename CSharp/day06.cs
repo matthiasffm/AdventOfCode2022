@@ -36,7 +36,7 @@ public class Day06
     // To fix the Elves communication system, you need to add a subroutine to the device that detects a start-of-packet marker in the datastream. In
     // the protocol being used by the Elves, the start of a packet is indicated by a sequence of four characters that are all different.
     // Puzzle == How many characters need to be processed before the first start-of-packet marker is detected?
-    private int Puzzle1(string signal) =>
+    private static int Puzzle1(string signal) =>
         3.To(signal.Length)
          .First(i => Test4Diff(signal.AsSpan().Slice(i - 3, 4)))
          + 1;
@@ -49,7 +49,7 @@ public class Day06
 
     // A start-of-message marker is just like a start-of-packet marker, except it consists of 14 distinct characters rather than 4.
     // Puzzle == How many characters need to be processed before the first start-of-message marker is detected?
-    private int Puzzle2(string signal, int markerLength)
+    private static int Puzzle2(string signal, int markerLength)
     {
         // uses a character lookup array for all 26 different letters in the alphabet
         // maps: [letter of alphabet] -> number of occurences in sliding window of markerLength

@@ -38,7 +38,7 @@ public class Day07
         public IEnumerable<long> DirectorySizes { get => Dirs.SelectMany(d => d.DirectorySizes).Concat(new[] { Size }); }
     }
 
-    private Dir ParseData(IEnumerable<string> lines)
+    private static Dir ParseData(IEnumerable<string> lines)
     {
         var root       = new Dir("root");
         var currentDir = root;
@@ -113,7 +113,7 @@ public class Day07
     // size of each directory. The total size of a directory is the sum of the sizes of the files it contains, directly or indirectly. To begin, find all of the
     // directories with a total size of at most 100000.
     // Puzzle == What is the sum of the total sizes of those directories?
-    private long Puzzle1(Dir root)
+    private static long Puzzle1(Dir root)
     {
         return root.DirectorySizes
                    .Where(size => size <= 100000L)
@@ -124,7 +124,7 @@ public class Day07
     // directory you can delete that will free up enough space to run the update.
     // Puzzle == Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total
     //           size of that directory?
-    private long Puzzle2(Dir root)
+    private static long Puzzle2(Dir root)
     {
         var unusedSpace     = 70000000L - root.Size;
         var neededForUpdate = 30000000L - unusedSpace;

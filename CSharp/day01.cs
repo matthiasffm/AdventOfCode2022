@@ -42,7 +42,7 @@ public class Day01
     }
 
     // parsed the input data and returns all calories every elv carries
-    private IEnumerable<IEnumerable<int>> ParseData(IEnumerable<string> data) =>
+    private static IEnumerable<IEnumerable<int>> ParseData(IEnumerable<string> data) =>
         string.Join(',', data.Select(d => d == string.Empty ? "#" : d))
               .Split("#", StringSplitOptions.RemoveEmptyEntries)
               .Select(s => s.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(cal => int.Parse(cal)));
@@ -51,7 +51,7 @@ public class Day01
     // In case the Elves get hungry and need extra snacks, they need to know which Elf to ask: they'd like to know how many
     // Calories are being carried by the Elf carrying the most Calories.
     // Puzzle == find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
-    private int Puzzle1(IEnumerable<IEnumerable<int>> elves) =>
+    private static int Puzzle1(IEnumerable<IEnumerable<int>> elves) =>
         elves.Max(e => e.Sum());
 
     // By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories

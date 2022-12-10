@@ -31,7 +31,7 @@ public class Day02
     }
 
     // encode the input data so choices of player 1 and player 2 are in 0..2 (0 = rock, 1 = paper, 2 = scissors)
-    private IEnumerable<(byte, byte)> ParseData(IEnumerable<string> data) =>
+    private static IEnumerable<(byte, byte)> ParseData(IEnumerable<string> data) =>
         data.Select(d => ((byte)(d[0] -'A'), (byte)(d[2] - 'X')));
 
     // one Elf gives you an encrypted strategy guide: "The first column is what your opponent is going to play: A for Rock, B for Paper, and C for
@@ -40,7 +40,7 @@ public class Day02
     // for a single round is the score for the shape you selected (1 for Rock, 2 for Paper, and 3 for Scissors) plus the score for the outcome of the
     // round (0 if you lost, 3 if the round was a draw, and 6 if you won).
     // Puzzle == What would your total score be if everything goes exactly according to your strategy guide?
-    private int Puzzle1(IEnumerable<(byte, byte)> matches) =>
+    private static int Puzzle1(IEnumerable<(byte, byte)> matches) =>
         matches.Sum(m => Scoring(m.Item2, Result[m.Item1, m.Item2]));
 
     // The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: X means you need

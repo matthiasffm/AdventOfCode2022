@@ -51,10 +51,10 @@ public class Day04
     // each Elf is assigned a range of section IDs. However, as some of the Elves compare their section assignments with
     // each other, they've noticed that many of the assignments overlap.
     // Puzzle == In how many assignment pairs does one range fully contain the other?
-    private int Puzzle1(IEnumerable<(Assignment left, Assignment right)> pairs) =>
+    private static int Puzzle1(IEnumerable<(Assignment left, Assignment right)> pairs) =>
         pairs.Count(p => p.left.FullyContains(p.right) || p.right.FullyContains(p.left));
 
     // Puzzle == In how many assignment pairs do the ranges overlap?
-    private int Puzzle2(IEnumerable<(Assignment left, Assignment right)> pairs) =>
+    private static int Puzzle2(IEnumerable<(Assignment left, Assignment right)> pairs) =>
         pairs.Count(p => p.left.Overlaps(p.right));
 }

@@ -7,6 +7,11 @@ public static class FileUtils
         return File.ReadAllLines(typeof(T).Name.ToLower() + ".data");
     }
 
+    public static string ReadAllText<T>(T day)
+    {
+        return File.ReadAllText(typeof(T).Name.ToLower() + ".data");
+    }
+
     public static TResult[] ParseByLine<T, TResult>(T day, Func<string, int, TResult> converter)
     {
         return ReadAllLines(day).Select((l, i) => converter(l, i))

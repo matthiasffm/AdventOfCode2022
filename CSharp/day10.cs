@@ -4,7 +4,6 @@ using NUnit.Framework;
 using FluentAssertions;
 
 using System.Text;
-using Iced.Intel;
 
 [TestFixture]
 public class Day10

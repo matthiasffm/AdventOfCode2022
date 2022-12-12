@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day5Solver {
+class Day05Solver {
 
     case class Move(count: Int, from: Int, to: Int)
 
@@ -58,7 +58,7 @@ class Day5Solver {
             case _         => s._1)
 }
 
-class Day5 extends AnyFlatSpec with should.Matchers {
+class Day05 extends AnyFlatSpec with should.Matchers {
 
     val sampleData = Array(
         "    [D]    ",
@@ -73,13 +73,13 @@ class Day5 extends AnyFlatSpec with should.Matchers {
     ).toSeq
 
     "Puzzle 1" should "contain the message from the letters on the top crates in the sample data" in {
-        val day5 = new Day5Solver
+        val day5 = new Day05Solver
         val data = day5.parseData(sampleData)
         day5.puzzle1(data._1, data._2) should be ("CMZ")
     }
 
     "Puzzle 2" should "contain the message from the letters on the top crates in the sample data" in {
-        val day5 = new Day5Solver
+        val day5 = new Day05Solver
         val data = day5.parseData(sampleData)
         day5.puzzle2(data._1, data._2) should be ("MCD")
     }
@@ -89,13 +89,13 @@ class Day5 extends AnyFlatSpec with should.Matchers {
                          .toSeq
 
     "Puzzle 1" should "contain the message from the letters on the top crates in the AoC data" in {
-        val day5 = new Day5Solver
+        val day5 = new Day05Solver
         val data = day5.parseData(realData)
         day5.puzzle1(data._1, data._2) should be ("PSNRGBTFT")
     }
 
     "Puzzle 2" should "count in how many assignment pairs the ranges overlap in the AoC data" in {
-        val day5 = new Day5Solver
+        val day5 = new Day05Solver
         val data = day5.parseData(realData)
         day5.puzzle2(data._1, data._2) should be ("BNTZFPMMW")
     }

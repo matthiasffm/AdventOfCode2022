@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day1Solver {
+class Day01Solver {
 
     def parse(data: Seq[String]) : Seq[Seq[Int]] = {
         return data.map(s => s match {
@@ -31,7 +31,7 @@ class Day1Solver {
     def puzzle2(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).sorted.takeRight(3).sum
 }
 
-class Day1 extends AnyFlatSpec with should.Matchers {
+class Day01 extends AnyFlatSpec with should.Matchers {
 
     val sampleData = Array(
                        "1000", "2000", "3000",
@@ -47,13 +47,13 @@ class Day1 extends AnyFlatSpec with should.Matchers {
     ).toSeq
 
     "Puzzle 1" should "find the elf carrying the most calories in the sample data" in {
-        val day1 = new Day1Solver
+        val day1 = new Day01Solver
         val elves = day1.parse(sampleData);
         day1.puzzle1(elves) should be (24000)
     }
 
     "Puzzle 2" should "find the top three elfs carrying the most calories in the sample data" in {
-        val day1 = new Day1Solver
+        val day1 = new Day01Solver
         val elves = day1.parse(sampleData);
         day1.puzzle2(elves) should be (45000)
     }
@@ -63,13 +63,13 @@ class Day1 extends AnyFlatSpec with should.Matchers {
                          .toSeq
 
     "Puzzle 1" should "find the elf carrying the most calories in the AoC data" in {
-        val day1 = new Day1Solver
+        val day1 = new Day01Solver
         val elves = day1.parse(realData);
         day1.puzzle1(elves) should be (64929)
     }
 
     "Puzzle 2" should "find the top three elfs carrying the most calories in the AoC data" in {
-        val day1 = new Day1Solver
+        val day1 = new Day01Solver
         val elves = day1.parse(realData);
         day1.puzzle2(elves) should be (193697)
     }

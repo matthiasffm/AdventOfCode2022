@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day8Solver {
+class Day08Solver {
 
     def parseData(input: Array[String]) : Array[Array[Byte]] = Array.tabulate(input.length, input.length)((row, col) => (input(row)(col) - '0').toByte)
 
@@ -53,7 +53,7 @@ class Day8Solver {
     }
 }
 
-class Day8 extends AnyFlatSpec with should.Matchers {
+class Day08 extends AnyFlatSpec with should.Matchers {
 
     var sampleData = Array(
         "30373",
@@ -64,13 +64,13 @@ class Day8 extends AnyFlatSpec with should.Matchers {
     )
 
     "Puzzle 1" should "count all trees visible from outside the forest in the sample data" in {
-        val day8 = new Day8Solver
+        val day8 = new Day08Solver
         var trees = day8.parseData(sampleData);
         day8.puzzle1(trees) should be (21)
     }
 
     "Puzzle 2" should "find the tree with the most scenic score in the sample data" in {
-        val day8 = new Day8Solver
+        val day8 = new Day08Solver
         var trees = day8.parseData(sampleData);
         day8.puzzle2(trees) should be (8)
     }
@@ -80,13 +80,13 @@ class Day8 extends AnyFlatSpec with should.Matchers {
                          .toArray
 
     "Puzzle 1" should "count all trees visible from outside the forest in the AoC data" in {
-        val day8 = new Day8Solver
+        val day8 = new Day08Solver
         var trees = day8.parseData(realData);
         day8.puzzle1(trees) should be (1717)
     }
 
     "Puzzle 2" should "find the tree with the most scenic score in the AoC data" in {
-        val day8 = new Day8Solver
+        val day8 = new Day08Solver
         var trees = day8.parseData(realData);
         day8.puzzle2(trees) should be (321975)
     }

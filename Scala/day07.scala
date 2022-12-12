@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day7Solver {
+class Day07Solver {
 
     class Dir(var dirs: List[Dir], val parent: Dir, var fileSizes: Int) {
         def this(parent: Dir) = {
@@ -66,7 +66,7 @@ class Day7Solver {
     }
 }
 
-class Day7 extends AnyFlatSpec with should.Matchers {
+class Day07 extends AnyFlatSpec with should.Matchers {
 
     var sampleData =Array(
         "$ cd /",
@@ -95,13 +95,13 @@ class Day7 extends AnyFlatSpec with should.Matchers {
     ).toSeq
 
     "Puzzle 1" should "sum of the total sizes of directories <= 100000 in the sample data" in {
-        val day7 = new Day7Solver
+        val day7 = new Day07Solver
         var rootDir = day7.parseData(sampleData);
         day7.puzzle1(rootDir) should be (95437)
     }
 
     "Puzzle 2" should "find the smallest directory in the sample data that, if deleted, would free up enough space on the filesystem to run the update" in {
-        val day7 = new Day7Solver
+        val day7 = new Day07Solver
         var rootDir = day7.parseData(sampleData);
         day7.puzzle2(rootDir) should be (24933642)
     }
@@ -111,13 +111,13 @@ class Day7 extends AnyFlatSpec with should.Matchers {
                          .toSeq
 
     "Puzzle 1" should "sum of the total sizes of directories <= 100000 in the AoC data" in {
-        val day7 = new Day7Solver
+        val day7 = new Day07Solver
         var rootDir = day7.parseData(realData);
         day7.puzzle1(rootDir) should be (1792222)
     }
 
     "Puzzle 2" should "find the smallest directory in the AoC data that, if deleted, would free up enough space on the filesystem to run the update" in {
-        val day7 = new Day7Solver
+        val day7 = new Day07Solver
         var rootDir = day7.parseData(realData);
         day7.puzzle2(rootDir) should be (1112963)
     }

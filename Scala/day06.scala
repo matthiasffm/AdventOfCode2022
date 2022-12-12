@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day6Solver {
+class Day06Solver {
 
     // To fix the Elves communication system, you need to add a subroutine to the device that detects a start-of-packet marker in the datastream. In
     // the protocol being used by the Elves, the start of a packet is indicated by a sequence of four characters that are all different.
@@ -16,10 +16,10 @@ class Day6Solver {
                                                                            .getOrElse(0)
 }
 
-class Day6 extends AnyFlatSpec with should.Matchers {
+class Day06 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "find how many characters need to be processed before the first start-of-packet marker is detected in the sample data" in {
-        val day6 = new Day6Solver
+        val day6 = new Day06Solver
         day6.puzzle("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 4) should be (7)
         day6.puzzle("bvwbjplbgvbhsrlpgdmjqwftvncz", 4) should be (5)
         day6.puzzle("nppdvjthqldpwncqszvftbrmjlhg", 4) should be (6)
@@ -28,7 +28,7 @@ class Day6 extends AnyFlatSpec with should.Matchers {
     }
 
     "Puzzle 2" should "find how many characters need to be processed before the first start-of-message marker is detected in the sample data" in {
-        val day6 = new Day6Solver
+        val day6 = new Day06Solver
         day6.puzzle("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 14) should be (19)
         day6.puzzle("bvwbjplbgvbhsrlpgdmjqwftvncz", 14) should be (23)
         day6.puzzle("nppdvjthqldpwncqszvftbrmjlhg", 14) should be (23)
@@ -41,12 +41,12 @@ class Day6 extends AnyFlatSpec with should.Matchers {
                          .mkString
 
     "Puzzle 1" should "find how many characters need to be processed before the first start-of-packet marker is detected in the AoC data" in {
-        val day6 = new Day6Solver
+        val day6 = new Day06Solver
         day6.puzzle(realData, 4) should be (1640)
     }
 
     "Puzzle 2" should "find how many characters need to be processed before the first start-of-message marker is detected in the AoC data" in {
-        val day6 = new Day6Solver
+        val day6 = new Day06Solver
         day6.puzzle(realData, 14) should be (3613)
     }
 }

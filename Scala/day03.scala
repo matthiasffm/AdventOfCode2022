@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day3Solver {
+class Day03Solver {
 
     // Each rucksack has two large compartments of the same size. All items of a given type are meant to go into
     // exactly one of the two compartments. The Elf that did the packing failed to follow this rule for exactly
@@ -35,7 +35,7 @@ class Day3Solver {
     def priority(letter: Char) : Int = if(letter >= 'a') letter - 'a' + 1 else letter - 'A' + 27
 }
 
-class Day3 extends AnyFlatSpec with should.Matchers {
+class Day03 extends AnyFlatSpec with should.Matchers {
 
     val sampleData = Array(
         "vJrwpWtwJgWrhcsFMMfFFhFp",
@@ -47,12 +47,12 @@ class Day3 extends AnyFlatSpec with should.Matchers {
     ).toSeq
 
     "Puzzle 1" should "sum the priorities of all misplaced items in the sample data" in {
-        val day3 = new Day3Solver
+        val day3 = new Day03Solver
         day3.puzzle1(sampleData) should be (16 + 38 +42 + 22 + 20 + 19)
     }
 
     "Puzzle 2" should "sum the priorities of all badges in the sample data" in {
-        val day3 = new Day3Solver
+        val day3 = new Day03Solver
         day3.puzzle2(sampleData) should be (18 + 52)
     }
 
@@ -61,12 +61,12 @@ class Day3 extends AnyFlatSpec with should.Matchers {
                          .toSeq
 
     "Puzzle 1" should "sum the priorities of all misplaced items in the AoC data" in {
-        val day3 = new Day3Solver
+        val day3 = new Day03Solver
         day3.puzzle1(realData) should be (8394)
     }
 
     "Puzzle 2" should "sum the priorities of all badges in the AoC data" in {
-        val day3 = new Day3Solver
+        val day3 = new Day03Solver
         day3.puzzle2(realData) should be (2413)
     }
 }

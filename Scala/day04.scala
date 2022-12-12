@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day4Solver {
+class Day04Solver {
 
     case class Assignment(min: Int, max: Int) {
         def contains(other: Assignment) : Boolean = min <= other.min && max >= other.max
@@ -27,7 +27,7 @@ class Day4Solver {
     def puzzle2(pairs: Seq[(Assignment, Assignment)]) : Int = pairs.count(p => p._1.overlaps(p._2))
 }
 
-class Day4 extends AnyFlatSpec with should.Matchers {
+class Day04 extends AnyFlatSpec with should.Matchers {
 
     val sampleData = Array(
         "2-4,6-8",
@@ -39,13 +39,13 @@ class Day4 extends AnyFlatSpec with should.Matchers {
     ).toSeq
 
     "Puzzle 1" should "count how many assignment pairs does one range fully contain the other in the sample data" in {
-        val day4 = new Day4Solver
+        val day4 = new Day04Solver
         val data = day4.parseData(sampleData)
         day4.puzzle1(data) should be (2)
     }
 
     "Puzzle 2" should "count in how many assignment pairs the ranges overlap in the sample data" in {
-        val day4 = new Day4Solver
+        val day4 = new Day04Solver
         val data = day4.parseData(sampleData)
         day4.puzzle2(data) should be (4)
     }
@@ -55,13 +55,13 @@ class Day4 extends AnyFlatSpec with should.Matchers {
                          .toSeq
 
     "Puzzle 1" should "count how many assignment pairs does one range fully contain the other in the AoC data" in {
-        val day4 = new Day4Solver
+        val day4 = new Day04Solver
         val data = day4.parseData(realData)
         day4.puzzle1(data) should be (651)
     }
 
     "Puzzle 2" should "count in how many assignment pairs the ranges overlap in the AoC data" in {
-        val day4 = new Day4Solver
+        val day4 = new Day04Solver
         val data = day4.parseData(realData)
         day4.puzzle2(data) should be (956)
     }

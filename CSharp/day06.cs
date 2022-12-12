@@ -51,34 +51,53 @@ public class Day06
     // Puzzle == How many characters need to be processed before the first start-of-message marker is detected?
     private static int Puzzle2(string signal, int markerLength)
     {
-        // uses a character lookup array for all 26 different letters in the alphabet
-        // maps: [letter of alphabet] -> number of occurences in sliding window of markerLength
-        // only has to update the first letter leaving the sliding window and the first
-        // letter entering the sliding window to update in the array
+        // uses a character lookup array for all 26 letters in the alphabet
+        // maps: [letter of alphabet in sliding window] -> uneven (true) or even (false) number of occurences in sliding window
+        // for the next position of the sliding window the algorithm only has to update the first letter leaving
+        // the sliding window and the first letter entering the sliding window to update in the lookuk array.
 
-        // TODO: only update leaving and entering letter in sliding window => O(n)
-
-        byte[] alphabet = new byte[26];
+        bool[] slidingWindow = new bool[26]; // could also be just a single 32 bit int
 
         for(int i = 0; i < markerLength; i++)
         {
-            alphabet[signal[i] - 'a']++;
+            slidingWindow[signal[i] - 'a'] ^= true;
         }
+
+        // we know we have 14 different characters when 14 values are true in the lookup map (nmbrOfUniques tracks this)
+
+        int nmbrOfUniques = slidingWindow.Count(a => a == true);
 
         for(int i = markerLength; i < signal.Length; i++)
         {
-            System.Diagnostics.Debug.Assert(alphabet.All(c => c >= 0));
-
-            if(!alphabet.Any(c => c > 1))
+            if(nmbrOfUniques == markerLength)
             {
                 return i;
             }
 
-            alphabet[signal[i - markerLength] - 'a']--;
-            alphabet[signal[i] - 'a']++;
+            nmbrOfUniques += UpdateSlidingWindow(slidingWindow, signal[i - markerLength] - 'a');
+            nmbrOfUniques += UpdateSlidingWindow(slidingWindow, signal[i] - 'a');
         }
 
-        System.Diagnostics.Debug.Fail("no starrt-of-message marker found");
+        System.Diagnostics.Debug.Fail("no start-of-message marker found");
         return -1;
+    }
+
+    // updates the values entering or leavong the sliding window
+    // if the character leaving the sliding window has even occurences we write true and add 1 to the unique count
+    //                                             has uneven occurences we write false and subtract 1 from the unique count
+    // if the character entering the sliding window has even occurences we write true and add 1 to the unique count
+    //                                              has uneven occurences we write false and subtract 1 from the unique count
+    private static int UpdateSlidingWindow(bool[] alphabet, int diff)
+    {
+        if(alphabet[diff] == false)
+        {
+            alphabet[diff] = true;
+            return 1;
+        }
+        else
+        {
+            alphabet[diff] = false;
+            return -1;
+        }
     }
 }

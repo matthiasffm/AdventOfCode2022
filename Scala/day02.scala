@@ -4,7 +4,7 @@ import org.scalatest._
 import flatspec._
 import matchers._
 
-class Day2Solver {
+class Day02Solver {
 
     def parse(data: Seq[String]) : Seq[(Int, Int)] = data.map(s => (s.charAt(0) - 'A', s.charAt(2) - 'X'))
 
@@ -32,18 +32,18 @@ class Day2Solver {
     def puzzle2(matches: Seq[(Int, Int)]) : Int =  matches.map(m => scoring(inverseResult(m(0), m(1)), m(1) * 3)).sum
 }
 
-class Day2 extends AnyFlatSpec with should.Matchers {
+class Day02 extends AnyFlatSpec with should.Matchers {
 
-    val sampleData = Array("A Y", "B X", "C Z")
+    val sampleData = IndexedSeq("A Y", "B X", "C Z")
 
     "Puzzle 1" should "sum the scores of all matches in the sample data with the incomplete strategy" in {
-        val day2 = new Day2Solver
+        val day2 = new Day02Solver
         val matches = day2.parse(sampleData);
         day2.puzzle1(matches) should be (15)
     }
 
     "Puzzle 2" should "sum the scores of all matches in the sample data with the complete strategy" in {
-        val day2 = new Day2Solver
+        val day2 = new Day02Solver
         val matches = day2.parse(sampleData);
         day2.puzzle2(matches) should be (12)
     }
@@ -53,13 +53,13 @@ class Day2 extends AnyFlatSpec with should.Matchers {
                          .toSeq
 
     "Puzzle 1" should "sum the scores of all matches in the AoC data with the incomplete strategy" in {
-        val day2 = new Day2Solver
+        val day2 = new Day02Solver
         val matches = day2.parse(realData);
         day2.puzzle1(matches) should be (11386)
     }
 
     "Puzzle 2" should "sum the scores of all matches in the AoC data with the incomplete strategy" in {
-        val day2 = new Day2Solver
+        val day2 = new Day02Solver
         val matches = day2.parse(realData);
         day2.puzzle2(matches) should be (13600)
     }

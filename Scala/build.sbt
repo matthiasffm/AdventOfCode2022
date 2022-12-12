@@ -8,5 +8,8 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
+    scalacOptions += "-Werror",
+    scalacOptions += "-deprecation",
+
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14"
   )

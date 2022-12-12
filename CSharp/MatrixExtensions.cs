@@ -45,4 +45,21 @@ public static class MatrixExtensions
 
         return count;
     }
+
+    public static IEnumerable<(TSource, int, int)> Where<TSource>(this TSource[,] matrix, Func<TSource, int, int, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(matrix);
+        ArgumentNullException.ThrowIfNull(predicate);
+
+        for(int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for(int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if(predicate(matrix[i, j], i, j))
+                {
+                    yield return (matrix[i, j], i, j);
+                }
+            }
+        }
+    }
 }

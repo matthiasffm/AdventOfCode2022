@@ -9,34 +9,26 @@ using matthiasffm.Common.Algorithms;
 [TestFixture]
 public class Day12
 {
-    private static int Elevation(char c) => c - 'a';
-
-    private static (int[,], (int, int), (int, int)) ParseData(string[] data)
+    private static (byte[,], (int, int), (int, int)) ParseData(string[] data)
     {
-        int[,]      heightmap = new int[data.Length, data[0].Length];
         (int, int)  startPos  = (0, 0);
         (int, int)  goal      = (0, 0);
-
-        for(int row = 0; row < data.Length; row++)
-        {
-            for(int col = 0; col < data[0].Length; col++)
+        byte[,]     heightmap = FileUtils.ParseToMatrix(data, (c, row, col) => {
+            if(c == 'S')
             {
-                if(data[row][col] == 'S')
-                {
-                    startPos = (row, col);
-                    heightmap[row, col] = Elevation('a');
-                }
-                else if(data[row][col] == 'E')
-                {
-                    goal = (row, col);
-                    heightmap[row, col] = Elevation('z');;
-                }
-                else
-                {
-                    heightmap[row, col] = Elevation(data[row][col]);;
-                }
+                startPos = (row, col);
+                return 0;
             }
-        }
+            else if(c == 'E')
+            {
+                goal = (row, col);
+                return 'z' - 'a';
+            }
+            else
+            {
+                return (byte)(c - 'a');
+            }
+        });
 
         return (heightmap, startPos, goal);
     }
@@ -77,7 +69,7 @@ public class Day12
     // to get out your climbing gear, the elevation of the destination square can be at most one higher than the elevation
     // of your current square.
     // Puzzle == What is the fewest steps required to move from the start to the location that should get the best signal?
-    private static int Puzzle1(int[,] heightmap, (int, int) startPos, (int, int) goal)
+    private static int Puzzle1(byte[,] heightmap, (int, int) startPos, (int, int) goal)
     {
         var bestPath = Search.AStar(heightmap.Select((e, r, c) => (r, c)),
                                     (startPos.Item1, startPos.Item2),
@@ -91,7 +83,7 @@ public class Day12
     }
 
     // neighbors are all 4 nodes (left, up, down, right) which are lower or only 1 step higher
-    private static IEnumerable<(int, int)> Neighbors(int[,] heightmap, int row, int col)
+    private static IEnumerable<(int, int)> Neighbors(byte[,] heightmap, int row, int col)
     {
         if(row > 0 && heightmap[row - 1, col] <= heightmap[row, col] + 1)
         {
@@ -123,7 +115,7 @@ public class Day12
     // steps to reach its goal. So, you'll need to find the shortest path from any square at elevation zero.
     // Puzzle == What is the fewest steps required to move starting from any square with elevation zero to the location that
     //           should get the best signal?
-    private static int Puzzle2(int[,] heightmap, (int, int) goal)
+    private static int Puzzle2(byte[,] heightmap, (int, int) goal)
     {
         // Instead of searching the best path for all zero starting locations we just invert the search
         // direction from Puzzle1 and start at the _goal_. Now if we reach a zero location, we found
@@ -141,7 +133,7 @@ public class Day12
     }
 
     // neighbors are all 4 nodes (left, up, down, right) which are higher or only 1 step lower
-    private static IEnumerable<(int, int)> NeighborsInverse(int[,] heightmap, int row, int col)
+    private static IEnumerable<(int, int)> NeighborsInverse(byte[,] heightmap, int row, int col)
     {
         if(row > 0 && heightmap[row - 1, col] >= heightmap[row, col] - 1)
         {
@@ -166,5 +158,5 @@ public class Day12
 
     // the goal location is unknown, but we know we can only hike down max 1 step at a time and the goal is at
     // height 0, so the best heuristic for the distance still to travel is the current height value at pos
-    private static int EstimateToAnA(int[,] heightmap, (int, int) pos) => heightmap[pos.Item1, pos.Item2];
+    private static int EstimateToAnA(byte[,] heightmap, (int, int) pos) => heightmap[pos.Item1, pos.Item2];
 }

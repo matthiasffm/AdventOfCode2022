@@ -6,6 +6,10 @@ using FluentAssertions;
 [TestFixture]
 public class Day01
 {
+    // parsed the input data and returns all calories every Elf carries
+    private static IEnumerable<IEnumerable<int>> ParseData(string[] data) =>
+        FileUtils.ParseMultilineTuples(data, cal => int.Parse(cal));
+
     [Test]
     public void TestSamples()
     {
@@ -40,12 +44,6 @@ public class Day01
         Puzzle1(elves).Should().Be(64929);
         Puzzle2(elves).Should().Be(193697);
     }
-
-    // parsed the input data and returns all calories every elv carries
-    private static IEnumerable<IEnumerable<int>> ParseData(IEnumerable<string> data) =>
-        string.Join(',', data.Select(d => d == string.Empty ? "#" : d))
-              .Split("#", StringSplitOptions.RemoveEmptyEntries)
-              .Select(s => s.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(cal => int.Parse(cal)));
 
     // One important consideration is food - in particular, the number of Calories each Elf is carrying (your puzzle input).
     // In case the Elves get hungry and need extra snacks, they need to know which Elf to ask: they'd like to know how many

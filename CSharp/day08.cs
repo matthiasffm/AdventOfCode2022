@@ -8,12 +8,7 @@ using matthiasffm.Common.Math;
 [TestFixture]
 public class Day08
 {
-    private static byte[,] ParseData(string[] lines)
-    {
-        var trees = new byte[lines.Length, lines[0].Length];
-        trees.Populate((r, c) => (byte)(lines[r][c] - '0'));
-        return trees;
-    }
+    private static byte[,] ParseData(string[] lines) => FileUtils.ParseToMatrix(lines, (c, row, col) => (byte)(c - '0'));
 
     [Test]
     public void TestSamples()

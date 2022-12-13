@@ -10,8 +10,8 @@ public class Day13
     private static string[] tokens     = new[] { "[", "]" };
 
     // converts a tokenized list like "[", "[", "11", "2", "]", "33", "]" (from puzzle input "[[11,2],33]") to a
-    // packet, which is a list of lists or integers, like for this example = List<object>{ List<object> { 11, 2}, 33 }
-    private static List<object> ConvertToPackets(List<string> tokens)
+    // packet, which is a list of lists or integers, like for this example = object[] { object[] { 11, 2}, 33 }
+    private static object[] ConvertToPackets(List<string> tokens)
     {
         var list = new List<object>();
 
@@ -26,7 +26,7 @@ public class Day13
             }
             else if(token == "]")
             {
-                return list;
+                return list.ToArray();
             }
             else
             {
@@ -34,11 +34,11 @@ public class Day13
             }
         }
 
-        return list;
+        return list.ToArray();
     }
 
     // parses data for puzzle 1 into pairs of packets
-    private static IEnumerable<(List<object>, List<object>)> ParseData(string[] data) =>
+    private static IEnumerable<(object[], object[])> ParseData(string[] data) =>
         FileUtils.ParseMultilinePairs(data, t => (ConvertToPackets(t.Item1.Tokenize(separators, tokens).ToList()),
                                                   ConvertToPackets(t.Item2.Tokenize(separators, tokens).ToList())));
 
@@ -46,29 +46,14 @@ public class Day13
     public void TestSamples()
     {
         var data = new[] {
-            "[1,1,3,1,1]",
-            "[1,1,5,1,1]",
-            "",
-            "[[1],[2,3,4]]",
-            "[[1],4]",
-            "",
-            "[9]",
-            "[[8,7,6]]",
-            "",
-            "[[4,4],4,4]",
-            "[[4,4],4,4,4]",
-            "",
-            "[7,7,7,7]",
-            "[7,7,7]",
-            "",
-            "[]",
-            "[3]",
-            "",
-            "[[[]]]",
-            "[[]]",
-            "",
-            "[1,[2,[3,[4,[5,6,7]]]],8,9]",
-            "[1,[2,[3,[4,[5,6,0]]]],8,9]",
+            "[1,1,3,1,1]",                  "[1,1,5,1,1]",                  string.Empty,
+            "[[1],[2,3,4]]",                "[[1],4]",                      string.Empty,
+            "[9]",                          "[[8,7,6]]",                    string.Empty,
+            "[[4,4],4,4]",                  "[[4,4],4,4,4]",                string.Empty,
+            "[7,7,7,7]",                    "[7,7,7]",                      string.Empty,
+            "[]",                           "[3]",                          string.Empty,
+            "[[[]]]",                       "[[]]",                         string.Empty,
+            "[1,[2,[3,[4,[5,6,7]]]],8,9]",  "[1,[2,[3,[4,[5,6,0]]]],8,9]",
         };
 
         var packetPairs = ParseData(data).ToArray();
@@ -113,7 +98,7 @@ public class Day13
     // Packet data consists of lists and integers. You need to compare them and determine which pairs of packets are already in the
     // right order.
     // Puzzle ==  What is the sum of the indices of those pairs?
-    private static int Puzzle1(IEnumerable<(List<object>, List<object>)> packetPairs)
+    private static int Puzzle1(IEnumerable<(object[], object[])> packetPairs)
     {
         return packetPairs.Select((pair, idx) => (pair, idx))
                           .Where(t => ComparePackets(t.pair.Item1, t.pair.Item2) == -1)
@@ -127,12 +112,12 @@ public class Day13
     // Afterward, locate the divider packets. To find the decoder key for this distress signal, you need to determine the indices
     // of the two divider packets and multiply them together.
     // Puzzle == Organize all of the packets into the correct order. What is the decoder key for the distress signal?
-    private static int Puzzle2(IEnumerable<List<object>> packets)
+    private static int Puzzle2(IEnumerable<object[]> packets)
     {
         var sortedPackets = packets.Order(new PacketComparer());
 
-        var two = new List<object>{ new List<object>{ 2 } };
-        var six = new List<object>{ new List<object>{ 6 } };
+        var two = new object[] { new object[] { 2 } };
+        var six = new object[] { new object[] { 6 } };
         var twoAndSix = sortedPackets.Select((packet, idx) => (packet, idx))
                                      .Where(t => ComparePackets(t.packet, two) == 0 || ComparePackets(t.packet, six) == 0)
                                      .ToArray();
@@ -142,9 +127,9 @@ public class Day13
     }
 
     // comparer class for sorting packages
-    private class PacketComparer : IComparer<List<object>>
+    private class PacketComparer : IComparer<object[]>
     {
-        public int Compare(List<object>? left, List<object>? right)
+        public int Compare(object[]? left, object[]? right)
         {
             return ComparePackets(left!, right!);
         }
@@ -160,14 +145,12 @@ public class Day13
     //   out of items first, the inputs are in the right order. If the right list runs out of items first, the inputs are not
     //   in the right order. If the lists are the same length and no comparison makes a decision about the order, continue
     //   checking the next part of the input.
-    // 
-    // left and right may change in the process when an integer packet is converted to a list
-    private static int ComparePackets(List<object> left, List<object> right)
+    private static int ComparePackets(object[] left, object[] right)
     {
         var posLeft  = 0;
         var posRight = 0;
 
-        while(posLeft < left.Count && posRight < right.Count)
+        while(posLeft < left.Length && posRight < right.Length)
         {
             if(left[posLeft] is int && right[posRight] is int)
             {
@@ -182,22 +165,16 @@ public class Day13
                     posRight++;
                 }
             }
-            else if(left[posLeft] is List<object> && right[posRight] is int)
-            {
-                right[posRight] = new List<object>{ right[posRight] };
-            }
-            else if(left[posLeft] is int && right[posRight] is List<object>)
-            {
-                left[posLeft] = new List<object>{ left[posLeft] };
-            }
             else
             {
-                // TODO: has this to be even recursive?
-                var orderRes = ComparePackets((List<object>)left[posLeft], (List<object>)right[posRight]);
+                var leftList  = (left[posLeft] is object[])   ? ((object[])left[posLeft])   : new object[] { left[posLeft] };
+                var rightList = (right[posRight] is object[]) ? ((object[])right[posRight]) : new object[] { right[posRight] };
 
-                if(orderRes != 0)
+                var order = ComparePackets(leftList, rightList);
+
+                if(order != 0)
                 {
-                    return orderRes;
+                    return order;
                 }
                 else
                 {
@@ -208,6 +185,6 @@ public class Day13
         }
 
         System.Diagnostics.Debug.Assert(posLeft == posRight);
-        return left.Count.CompareTo(right.Count);
+        return left.Length.CompareTo(right.Length);
     }
 }

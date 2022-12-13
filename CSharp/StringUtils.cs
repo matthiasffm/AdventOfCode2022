@@ -13,7 +13,7 @@ public static class StringExtensions
         {
             for(int i = 0; i < s.Length;)
             {
-                var (tokenFound, idx) = tokens.Select(t => (t, s[i..].IndexOf(t)))
+                var (tokenFound, idx) = tokens.Select(t => (t, s.AsSpan()[i..].IndexOf(t)))
                                               .Select(t => t.Item2 >= 0 ? t : (t.Item1, int.MaxValue))
                                               .MinBy(tuple => tuple.Item2);
 
@@ -29,7 +29,7 @@ public static class StringExtensions
                 }
                 else
                 {
-                    result.Add(s[i..(i + idx)].ToString());
+                    result.Add(s.AsSpan()[i..(i + idx)].ToString());
                     result.Add(tokenFound);
                     i += idx + tokenFound.Length;
                 }

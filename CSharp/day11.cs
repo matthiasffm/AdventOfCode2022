@@ -3,28 +3,26 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using System.Text;
-
 [TestFixture]
 public class Day11
 {
     interface IWorryOperation { long Calc(long old); }
 
-    struct AddWorryOp : IWorryOperation
+    private readonly struct AddWorryOp : IWorryOperation
     {
-        private long _toAdd;
+        private readonly long _toAdd;
         public AddWorryOp(long toAdd) { _toAdd = toAdd; }
         public long Calc(long oldWorryLevel) => _toAdd + oldWorryLevel;
     }
 
-    struct MultiplyWorryOp : IWorryOperation
+    private readonly struct MultiplyWorryOp : IWorryOperation
     {
-        private long _factor;
+        private readonly long _factor;
         public MultiplyWorryOp(long factor) { _factor = factor; }
         public long Calc(long oldWorryLevel) => _factor * oldWorryLevel;
     }
 
-    struct SquareWorryOp : IWorryOperation
+    private readonly struct SquareWorryOp : IWorryOperation
     {
         public SquareWorryOp() { }
         public long Calc(long oldWorryLevel) => oldWorryLevel * oldWorryLevel;
@@ -42,7 +40,7 @@ public class Day11
 
     private static IEnumerable<Monkey> ParseData(string data, string separator)
     {
-        List<Monkey> monkeys = new List<Monkey>();
+        List<Monkey> monkeys = new();
 
         foreach(var monkeySpec in data.Split(separator + separator))
         {
@@ -130,12 +128,14 @@ public class Day11
     // a single turn is called a round.
     // Chasing all of the monkeys at once is impossible; focus on the two most active monkeys if you want any hope of getting your stuff back. Multiplying
     // their level is called the monkey business in this situation.
+    //
     // Puzzle == What is the level of monkey business after 20 rounds of stuff-slinging simian shenanigans?
     private static long Puzzle1(IEnumerable<Monkey> monkeys)
         => MonkeyBusiness(monkeys.Select(m => m.CloneWithQueue()).ToArray(), 3, 20);
 
     // You're worried you might not ever get your items back. So worried, in fact, that your relief that a monkey's inspection didn't damage an item no
     // longer causes your worry level to be divided by three.
+    //
     // Puzzle == What is the level of monkey business after 10000 rounds?
     private static long Puzzle2(IEnumerable<Monkey> monkeys)
         => MonkeyBusiness(monkeys.Select(m => m.CloneWithQueue()).ToArray(), 1, 10000);

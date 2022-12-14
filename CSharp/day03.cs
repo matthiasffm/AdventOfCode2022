@@ -35,12 +35,12 @@ public class Day03
     // exactly one of the two compartments. The Elf that did the packing failed to follow this rule for exactly
     // one item type per rucksack.
     // To help prioritize item rearrangement, every item type can be converted to a priority (= number of letter). 
+    //
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
     private static int Puzzle1(IEnumerable<string> rucksacks) =>
         rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan()[..(r.Length / 2)])
-                                       &
-                                       ToUlong(r.AsSpan().Slice(r.Length / 2, r.Length / 2 ))));
+                                       & ToUlong(r.AsSpan()[(r.Length / 2)..])));
 
     // The Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For
     // efficiency, within each group of three Elves, the badge is the only item type carried by all three Elves.
@@ -48,6 +48,7 @@ public class Day03
     // rucksack, and at most two of the Elves will be carrying any other item type.
     // Additionally, nobody wrote down which item type corresponds to each group's badges. The only way to tell
     // which item type is the right one is by finding the one that is common between all three Elves in each group.
+    //
     // Puzzle == Find the item type that corresponds to the badges of each three-Elf group. What is the sum of
     //           the priorities of those item types?
     private static int Puzzle2(IEnumerable<string> rucksacks) =>

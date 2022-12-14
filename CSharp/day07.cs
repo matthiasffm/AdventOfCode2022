@@ -112,6 +112,7 @@ public class Day07
     // Since the disk is full, your first step should be to find directories that are good candidates for deletion. To do this, you need to determine the total
     // size of each directory. The total size of a directory is the sum of the sizes of the files it contains, directly or indirectly. To begin, find all of the
     // directories with a total size of at most 100000.
+    //
     // Puzzle == What is the sum of the total sizes of those directories?
     private static long Puzzle1(Dir root)
     {
@@ -122,6 +123,7 @@ public class Day07
 
     // The total disk space available to the filesystem is 70000000. To run the update, you need unused space of at least 30000000. You need to find a
     // directory you can delete that will free up enough space to run the update.
+    //
     // Puzzle == Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total
     //           size of that directory?
     private static long Puzzle2(Dir root)

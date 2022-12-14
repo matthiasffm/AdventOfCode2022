@@ -87,6 +87,7 @@ public class Day09
     // Consider a rope with a knot at each end; these knots mark the head and the tail of the rope. If the head moves far enough away from the
     // tail, the tail is pulled toward the head. All elements of the rope from head to tail must always be touching at every single move (diagonally adjacent
     // and even overlapping both count as touching). After simulating the ropes moves, you can count up all of the positions the tail visited at least once.
+    //
     // Puzzle == Simulate the series of motions. How many positions does the tail of the rope visit at least once?
     private static int Puzzle(IEnumerable<Move> moves, int ropeLength)
     {

@@ -40,16 +40,17 @@ public class Day04
                .Select(s => (new Assignment(s[0]), new Assignment(s[1])))
                .ToArray();
 
-    private record Assignment(int min, int max)
+    private record Assignment(int Min, int Max)
     {
         public Assignment(string s) : this(int.Parse(s.Split('-')[0]), int.Parse(s.Split('-')[1])) {}
-        public bool FullyContains(Assignment other) => min <= other.min && max >= other.max;
-        public bool Overlaps(Assignment other) => min.Between(other.min, other.max) || other.min.Between(min, max);
+        public bool FullyContains(Assignment other) => Min <= other.Min && Max >= other.Max;
+        public bool Overlaps(Assignment other) => Min.Between(other.Min, other.Max) || other.Min.Between(Min, Max);
     }
 
     // Elves have been assigned the job of cleaning up sections of the camp. Every section has a unique ID number, and
     // each Elf is assigned a range of section IDs. However, as some of the Elves compare their section assignments with
     // each other, they've noticed that many of the assignments overlap.
+    //
     // Puzzle == In how many assignment pairs does one range fully contain the other?
     private static int Puzzle1(IEnumerable<(Assignment left, Assignment right)> pairs) =>
         pairs.Count(p => p.left.FullyContains(p.right) || p.right.FullyContains(p.left));

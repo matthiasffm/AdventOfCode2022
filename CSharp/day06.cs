@@ -3,6 +3,8 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+using System.Diagnostics;
+
 using matthiasffm.Common;
 
 [TestFixture]
@@ -35,6 +37,7 @@ public class Day06
 
     // To fix the Elves communication system, you need to add a subroutine to the device that detects a start-of-packet marker in the datastream. In
     // the protocol being used by the Elves, the start of a packet is indicated by a sequence of four characters that are all different.
+    //
     // Puzzle == How many characters need to be processed before the first start-of-packet marker is detected?
     private static int Puzzle1(string signal) =>
         3.To(signal.Length)
@@ -45,9 +48,10 @@ public class Day06
     private static bool Test4Diff(ReadOnlySpan<char> toTest) =>
         toTest[0] != toTest[1] && toTest[0] != toTest[2] && toTest[0] != toTest[3] &&
         toTest[1] != toTest[2] && toTest[1] != toTest[3] &&  
-        toTest[2] != toTest[3]; 
+        toTest[2] != toTest[3];
 
     // A start-of-message marker is just like a start-of-packet marker, except it consists of 14 distinct characters rather than 4.
+    //
     // Puzzle == How many characters need to be processed before the first start-of-message marker is detected?
     private static int Puzzle2(string signal, int markerLength)
     {
@@ -78,7 +82,7 @@ public class Day06
             nmbrOfUniques += UpdateSlidingWindow(slidingWindow, signal[i] - 'a');
         }
 
-        System.Diagnostics.Debug.Fail("no start-of-message marker found");
+        Debug.Fail("no start-of-message marker found");
         return -1;
     }
 

@@ -60,6 +60,7 @@ public class Day10
     // ticks at a constant rate; each tick is called a cycle. The CPU has a single register, X, which starts with the value 1. It supports only two instructions:
     // 'addx V' takes two cycles to complete. After two cycles, the X register is increased by the value V. (V can be negative.)
     // 'noop' takes one cycle to complete. It has no other effect.
+    //
     // Puzzle == Consider the signal strength (the cycle number multiplied by the value of the X register) _during_ the 20th cycle and every 40 cycles after that.
     //           What is the sum of these six signal strengths?
     private static int Puzzle1(string[] instructions)
@@ -93,6 +94,7 @@ public class Day10
     // So, by carefully timing the CPU instructions and the CRT drawing operations, you should be able to determine whether the sprite is visible the instant each
     // pixel is drawn. If the sprite is positioned such that one of its three pixels is the pixel currently being drawn, the screen produces a lit pixel (#);
     // otherwise, the screen leaves the pixel dark (.).
+    //
     // Puzzle == Render the image given by your program. What eight capital letters appear on your CRT?
     private static string Puzzle2(string[] instructions)
     {

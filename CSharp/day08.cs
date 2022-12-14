@@ -40,6 +40,7 @@ public class Day08
     // number of trees that are visible from outside the grid when looking directly along a row or column.
     // A tree is visible if all of the other trees between it and an edge of the grid are shorter than it. Only consider trees in
     // the same row or column; that is, only look up, down, left, or right from any given tree.
+    //
     // Puzzle == Consider your map; how many trees are visible from outside the grid?
     private static int Puzzle1(byte[,] trees)
     {
@@ -94,6 +95,7 @@ public class Day08
     // To measure the viewing distance from a given tree, look up, down, left, and right from that tree; stop if you reach an
     // edge or at the first tree that is the same height or taller than the tree under consideration. (so a tree on the edge == 0)
     // A tree's scenic score is found by multiplying together its viewing distance in each of the four directions.
+    //
     // Puzzle == What is the highest scenic score possible for any tree?
     private static int Puzzle2(byte[,] trees)
     {

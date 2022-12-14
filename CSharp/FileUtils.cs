@@ -2,17 +2,17 @@ namespace AdventOfCode2022;
 
 public static class FileUtils
 {
-    public static string[] ReadAllLines<T>(T day)
+    public static string[] ReadAllLines(object day)
     {
-        return File.ReadAllLines(typeof(T).Name.ToLower() + ".data");
+        return File.ReadAllLines(day.GetType().Name.ToLower() + ".data");
     }
 
-    public static string ReadAllText<T>(T day)
+    public static string ReadAllText(object day)
     {
-        return File.ReadAllText(typeof(T).Name.ToLower() + ".data");
+        return File.ReadAllText(day.GetType().Name.ToLower() + ".data");
     }
 
-    public static TResult[] ParseByLine<T, TResult>(T day, Func<string, int, TResult> converter)
+    public static TResult[] ParseByLine<TResult>(object day, Func<string, int, TResult> converter)
     {
         return ReadAllLines(day).Select((l, i) => converter(l, i))
                                 .ToArray();

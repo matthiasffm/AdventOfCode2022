@@ -57,7 +57,7 @@ public class Day12
         var (heightmap, startPos, goal) = ParseData(data);
 
         Puzzle1(heightmap, startPos, goal).Should().Be(408);
-        //Puzzle2(heightmap, goal).Should().Be(399);
+        Puzzle2(heightmap, goal).Should().Be(399);
     }
 
     // every step (left, up, down, right) in the heightmap has the same cost == 1
@@ -68,6 +68,7 @@ public class Day12
     // steps as possible. During each step, you can move exactly one square up, down, left, or right. To avoid needing
     // to get out your climbing gear, the elevation of the destination square can be at most one higher than the elevation
     // of your current square.
+    //
     // Puzzle == What is the fewest steps required to move from the start to the location that should get the best signal?
     private static int Puzzle1(byte[,] heightmap, (int, int) startPos, (int, int) goal)
     {
@@ -113,6 +114,7 @@ public class Day12
     // scenic, though; perhaps you can find a better starting point. To maximize exercise while hiking, the trail should start as
     // low as possible: elevation zero. The goal is still the same. However, the trail should still be direct, taking the fewest
     // steps to reach its goal. So, you'll need to find the shortest path from any square at elevation zero.
+    //
     // Puzzle == What is the fewest steps required to move starting from any square with elevation zero to the location that
     //           should get the best signal?
     private static int Puzzle2(byte[,] heightmap, (int, int) goal)

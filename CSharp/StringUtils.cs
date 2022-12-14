@@ -13,9 +13,9 @@ public static class StringExtensions
         {
             for(int i = 0; i < s.Length;)
             {
-                var (tokenFound, idx) = tokens.Select(t => (t, s.AsSpan()[i..].IndexOf(t)))
-                                              .Select(t => t.Item2 >= 0 ? t : (t.Item1, int.MaxValue))
-                                              .MinBy(tuple => tuple.Item2);
+                var (tokenFound, idx) = tokens.Select(t => (token: t, idx: s.AsSpan()[i..].IndexOf(t)))
+                                              .Select(t => t.idx >= 0 ? t : (t.token, idx: int.MaxValue))
+                                              .MinBy(tuple => tuple.idx);
 
                 if(idx == int.MaxValue)
                 {

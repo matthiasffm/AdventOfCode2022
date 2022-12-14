@@ -39,6 +39,7 @@ public class Day02
     // The winner of the whole tournament is the player with the highest score. Your total score is the sum of your scores for each round. The score
     // for a single round is the score for the shape you selected (1 for Rock, 2 for Paper, and 3 for Scissors) plus the score for the outcome of the
     // round (0 if you lost, 3 if the round was a draw, and 6 if you won).
+    //
     // Puzzle == What would your total score be if everything goes exactly according to your strategy guide?
     private static int Puzzle1(IEnumerable<(byte, byte)> matches) =>
         matches.Sum(m => Scoring(m.Item2, Result[m.Item1, m.Item2]));
@@ -46,6 +47,7 @@ public class Day02
     // The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: X means you need
     // to lose, Y means you need to end the round in a draw, and Z means you need to win. Good luck!"
     // The total score is still calculated in the same way, but now you need to figure out what shape to choose so the round ends as indicated.
+    //
     // Puzzle == Following the Elf's now complete instructions, what would your total score be if everything goes exactly according to your strategy guide?
     private static int Puzzle2(IEnumerable<(byte, byte)> matches) =>
         matches.Sum(m => Scoring(InverseResult[m.Item1, m.Item2], (byte)(m.Item2 * 3)));

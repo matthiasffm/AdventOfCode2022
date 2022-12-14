@@ -9,7 +9,7 @@ using BenchmarkDotNet.Running;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static void Main()
     {
         // var summary = BenchmarkRunner.Run<BenchmarkDay3>(ManualConfig.CreateMinimumViable()
         //                                                              .WithOptions(ConfigOptions.DisableOptimizationsValidator));
@@ -32,7 +32,7 @@ public class Program
 [RPlotExporter]
 public class BenchmarkDay3
 {
-    private string[] _rucksacks = {};
+    private string[] _rucksacks = Array.Empty<string>();
 
     private static int Priority(char letter) => char.IsLower(letter) ? letter - 'a' + 1 : letter - 'A' + 27;
 
@@ -81,9 +81,9 @@ public class BenchmarkDay3
     [Benchmark]
     public int BitArray()
     {
-        var sumPriorities = _rucksacks.Sum(r => FirstSetBit(ToBitArray(r.AsSpan().Slice(0, r.Length / 2 ))
+        var sumPriorities = _rucksacks.Sum(r => FirstSetBit(ToBitArray(r.AsSpan()[..(r.Length / 2)])
                                                             .And(
-                                                            ToBitArray(r.AsSpan().Slice(r.Length / 2, r.Length / 2 )))));
+                                                            ToBitArray(r.AsSpan()[(r.Length / 2)..]))));
 
         var sumPriorities2 = _rucksacks.Where((r, i) => i % 3 == 0)
                                        .Zip(_rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
@@ -127,7 +127,7 @@ public class BenchmarkDay3
     [Benchmark]
     public int Ulong()
     {
-        var sumPriorities = _rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan().Slice(0, r.Length / 2 ))
+        var sumPriorities = _rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan()[..(r.Length / 2)])
                                                             &
                                                             ToUlong(r.AsSpan().Slice(r.Length / 2, r.Length / 2 ))));
 

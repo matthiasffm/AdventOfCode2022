@@ -3,11 +3,13 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+using static System.Diagnostics.Debug;
+
 [TestFixture]
 public class Day13
 {
-    private static string[] separators = new[] { "," };
-    private static string[] tokens     = new[] { "[", "]" };
+    private static readonly string[] separators = new[] { "," };
+    private static readonly string[] tokens     = new[] { "[", "]" };
 
     // converts a tokenized list like "[", "[", "11", "2", "]", "33", "]" (from puzzle input "[[11,2],33]") to a
     // packet, which is a list of lists or integers, like for this example = object[] { object[] { 11, 2}, 33 }
@@ -97,6 +99,7 @@ public class Day13
     // packets. You need to identify how many pairs of packets are in the right order.
     // Packet data consists of lists and integers. You need to compare them and determine which pairs of packets are already in the
     // right order.
+    //
     // Puzzle ==  What is the sum of the indices of those pairs?
     private static int Puzzle1(IEnumerable<(object[], object[])> packetPairs)
     {
@@ -111,6 +114,7 @@ public class Day13
     // packets - into the correct order.
     // Afterward, locate the divider packets. To find the decoder key for this distress signal, you need to determine the indices
     // of the two divider packets and multiply them together.
+    //
     // Puzzle == Organize all of the packets into the correct order. What is the decoder key for the distress signal?
     private static int Puzzle2(IEnumerable<object[]> packets)
     {
@@ -122,7 +126,7 @@ public class Day13
                                      .Where(t => ComparePackets(t.packet, two) == 0 || ComparePackets(t.packet, six) == 0)
                                      .ToArray();
 
-        System.Diagnostics.Debug.Assert(twoAndSix.Length == 2);
+        Assert(twoAndSix.Length == 2);
         return (twoAndSix[0].idx + 1) * (twoAndSix[1].idx + 1);
     }
 
@@ -152,9 +156,9 @@ public class Day13
 
         while(posLeft < left.Length && posRight < right.Length)
         {
-            if(left[posLeft] is int && right[posRight] is int)
+            if(left[posLeft] is int leftInt && right[posRight] is int rightInt)
             {
-                var intCompare = ((int)left[posLeft]).CompareTo((int)right[posRight]);
+                var intCompare = leftInt.CompareTo(rightInt);
                 if(intCompare != 0)
                 {
                     return intCompare;
@@ -167,8 +171,8 @@ public class Day13
             }
             else
             {
-                var leftList  = (left[posLeft] is object[])   ? ((object[])left[posLeft])   : new object[] { left[posLeft] };
-                var rightList = (right[posRight] is object[]) ? ((object[])right[posRight]) : new object[] { right[posRight] };
+                var leftList  = (left[posLeft] is object[] leftObj)    ? leftObj  : new object[] { left[posLeft] };
+                var rightList = (right[posRight] is object[] rightObj) ? rightObj : new object[] { right[posRight] };
 
                 var order = ComparePackets(leftList, rightList);
 
@@ -184,7 +188,7 @@ public class Day13
             }
         }
 
-        System.Diagnostics.Debug.Assert(posLeft == posRight);
+        Assert(posLeft == posRight);
         return left.Length.CompareTo(right.Length);
     }
 }

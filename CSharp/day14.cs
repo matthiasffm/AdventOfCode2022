@@ -3,8 +3,7 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using System;
-using System.Diagnostics;
+using static System.Math;
 
 [TestFixture]
 public class Day14
@@ -167,7 +166,7 @@ public class Day14
     private static void DrawRockSegment(byte[,] cave, (int, int) start, (int, int) end)
     {
         var diff   = (end.Item1 - start.Item1, end.Item2 - start.Item2);
-        var length = Math.Max(Math.Abs(diff.Item1), Math.Abs(diff.Item2));
+        var length = Max(Abs(diff.Item1), Abs(diff.Item2));
 
         diff = (diff.Item1 / length, diff.Item2 / length);
 

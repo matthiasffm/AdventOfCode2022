@@ -25,10 +25,10 @@ jobs:
       run: dotnet restore CSharp/aoc2022.csproj
 
     - name: Build .NET
-      run: dotnet build CSharp/aoc2022.csproj --no-restore
+      run: dotnet build CSharp/aoc2022.csproj --no-restore --configuration Release
 
     - name: Test .NET
-      run: dotnet test CSharp/aoc2022.csproj --no-build --verbosity normal
+      run: dotnet test CSharp/aoc2022.csproj --no-build --verbosity normal --configuration Release
 
     - name: Setup Java
       uses: actions/setup-java@v3

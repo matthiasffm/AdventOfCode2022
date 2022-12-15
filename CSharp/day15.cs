@@ -99,6 +99,15 @@ public class Day15
     // Puzzle == Find the only possible position for the distress beacon. What is its tuning frequency?
     private static long Puzzle2(IEnumerable<Sensor> sensors, int startCoord, int endCoord)
     {
+        // TODO: is O(rows), way too slow
+        //       faster would be looking at the space each border line of the signal coverage (a diamond shape) divides into
+        //       -> each signal divides the space with the 4 border lines, the inner is the signal coverage, the outer is
+        //          not covered
+        //       -> we know the gap is only 1 unit wide, so every other row or column is covered
+        //       -> build two diagonal ranges for the coverage of the borders of every signal diamond
+        //       -> these two ranges should only consist of 2 elements each if the gap is the only one
+        //       -> should be same complexity as solution 1
+
         // search every row where ranges have a single gap
 
         for(int row = endCoord; row >= startCoord; row--) // faster to search backwards, both solutions are at the end ;)

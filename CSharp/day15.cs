@@ -3,7 +3,11 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using static System.Math;
+
+using matthiasffm.Common;
 using matthiasffm.Common.Math;
 
 [TestFixture]
@@ -11,10 +15,12 @@ public class Day15
 {
     private record Sensor(Vec2<int> Pos, Vec2<int> Beacon)
     {
+        public int Distance => Pos.ManhattanDistance(Beacon);
+
         // returns the range (x1, x2) of signal positions x1 to x2 this sensor covers in this row
         public (int, int) CoverageAtRow(int row)
         {
-            var distanceConveredInRow = Pos.ManhattanDistance(Beacon) - Abs(Pos.Y - row);
+            var distanceConveredInRow = Distance - Abs(Pos.Y - row);
             return (Pos.X - distanceConveredInRow, Pos.X + distanceConveredInRow);
         }
     }
@@ -77,10 +83,7 @@ public class Day15
     {
         // result for the specified row is all sensor ranges in this row - all beacon positions in these ranges
 
-        var ranges = sensors.Select(sensor => sensor.CoverageAtRow(row))
-                            .Where(range => IsValidRange(range))
-                            .Aggregate(new LinkedList<(int, int)>(),
-                                       (mergedRanges, range) => MergeRange(mergedRanges, range));
+        var ranges = FindSensorRangesInRow(sensors, row);
 
         var beacons = sensors.Where(s => s.Beacon.Y == row)
                              .Select(s => s.Beacon)
@@ -99,45 +102,64 @@ public class Day15
     // Puzzle == Find the only possible position for the distress beacon. What is its tuning frequency?
     private static long Puzzle2(IEnumerable<Sensor> sensors, int startCoord, int endCoord)
     {
-        // TODO: is O(rows), way too slow
-        //       faster would be looking at the space each border line of the signal coverage (a diamond shape) divides into
-        //       -> each signal divides the space with the 4 border lines, the inner is the signal coverage, the outer is
-        //          not covered
-        //       -> we know the gap is only 1 unit wide, so every other row or column is covered
-        //       -> build two diagonal ranges for the coverage of the borders of every signal diamond
-        //       -> these two ranges should only consist of 2 elements each if the gap is the only one
-        //       -> should be same complexity as solution 1
+        // we could investigate _every_ row from startCoord to endCoord (takes about a second) or we
+        // could only investigage the rows, where a gap could be even near.
+        // the gap has to be where borders of 4 or more signals are very close to each other or intersect:
+        // all border are diagonals with y = (+/-)x + n
+        // so we collect and sort the params of these diagonals on every axis and select only those of them which are _very_ close
+        // to each other (within 2 units)
+        // then we intersect all these remaining diagonals with each other and only investigate the rows near these intersections
+        // 
+        // so we get from O(rows*m) to O(close_intersections*m); and close intersections are a small subset of the
+        // intersections of all 4 diagonals of all signals combined (from 2500 down to around like a 100)
 
-        // search every row where ranges have a single gap
+        var diagParams1 = sensors.Select(sensor => sensor.Pos.X - sensor.Pos.Y - sensor.Distance)
+                                 .Concat(sensors.Select(sensor => sensor.Pos.X - sensor.Pos.Y + sensor.Distance))
+                                 .Order()
+                                 .Pairs()
+                                 .Where(pair => Abs(pair.Item1 - pair.Item2) <= 2)
+                                 .SelectMany(pair => new[] { pair.Item1, pair.Item2 });
+        var diagParams2 = sensors.Select(sensor => sensor.Pos.X + sensor.Pos.Y - sensor.Distance)
+                                 .Concat(sensors.Select(sensor => sensor.Pos.X + sensor.Pos.Y + sensor.Distance))
+                                 .Order()
+                                 .Pairs()
+                                 .Where(pair => Abs(pair.Item1 - pair.Item2) <= 2)
+                                 .SelectMany(pair => new[] { pair.Item1, pair.Item2 });
 
-        for(int row = endCoord; row >= startCoord; row--) // faster to search backwards, both solutions are at the end ;)
+        var rowsNearCloseIntersections = diagParams1.Variations(diagParams2)
+                                                    .Select(ns => (ns.Item2 - ns.Item1) / 2) // diagonales intersect at y = (n2 - n1) / 2;
+                                                    .Where(row => row.Between(startCoord, endCoord))
+                                                    .Distinct();
+
+        // search every row near a crossing of diagonals if there are ranges have a single gap in this row
+
+        foreach(var row in rowsNearCloseIntersections)
         {
-            var ranges = sensors.Select(sensor => sensor.CoverageAtRow(row))
-                                .Where(range => IsValidRange(range))
-                                .Aggregate(new LinkedList<(int, int)>(),
-                                           (mergedRanges, range) => MergeRange(mergedRanges, range));
-            System.Diagnostics.Debug.Assert(ranges.Count >= 1);
+            var ranges = FindSensorRangesInRow(sensors, row);
 
             if(ranges.Count > 1)
             {
-                // no gap directly at the border occurs in this data 
-                // in this data there should only be a single gap
-
-                System.Diagnostics.Debug.Assert(ranges.Count == 2);
-
                 var colWithGap = ranges.First!.Value.Item2 + 1;
-                System.Diagnostics.Debug.Assert(ranges.First!.Next!.Value.Item1 == colWithGap + 1);
-
                 return colWithGap * 4000000L + row;
             }
         }
 
-        System.Diagnostics.Debug.Fail("Houston we have a problem! No gap in sensor coverage found.");
+        Debug.Fail("Houston we have a problem! No gap in sensor coverage found.");
         return -1L;
     }
 
+    // finds all ranges in a row covered by signals, returns a list of (start, end) tuple sorted from left to right
+    private static LinkedList<(int, int)> FindSensorRangesInRow(IEnumerable<Sensor> sensors, int row) =>
+        sensors.Select(sensor => sensor.CoverageAtRow(row))
+               .Where(range => IsValidRange(range))
+               .Aggregate(new LinkedList<(int, int)>(),
+                          (mergedRanges, range) => MergeRange(mergedRanges, range));
+
     private static bool IsValidRange((int, int) range) => range.Item2 >= range.Item1;
 
+    // merges a range to a (sorted) list of ranges
+    // if the new range overlaps an existing range in the list the 2 ranges are merged
+    // after the merge operation only ranges are in the list with a minimum of 1 unit apart
     private static LinkedList<(int, int)> MergeRange(LinkedList<(int, int)> ranges, (int, int) toMerge)
     {
         ranges.AddFirst(toMerge);
@@ -153,9 +175,7 @@ public class Day15
             }
             else if(currentRange.Value.Item1 > nextRange.Value.Item2 + 1)
             {
-                var tmp = currentRange.Value;
-                currentRange.Value = nextRange.Value;
-                nextRange.Value = tmp;
+                (nextRange.Value, currentRange.Value) = (currentRange.Value, nextRange.Value);
             }
             else
             {

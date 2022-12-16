@@ -9,4 +9,8 @@ public static class EnumerableExtension
             action(elem);
         }
     }
+    public static IEnumerable<(T, T)> Variations<T>(this IEnumerable<T> collLeft, IEnumerable<T> collRight)
+    {
+        return collLeft.SelectMany(leftItem => collRight.Select(rightItem => (leftItem, rightItem)));
+    }
 }

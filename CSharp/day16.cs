@@ -254,7 +254,7 @@ public class Day16
         {
             dPressure += room1.FlowRate;
 
-            // max aller tunnel von 1 aus
+            // room1 reached before room2 => calc max of all tunnels from room1
 
             var toVisit = TunnelsToVisit(room1, openValves);
 
@@ -276,7 +276,7 @@ public class Day16
         {
             dPressure += room2.FlowRate;
 
-            // max aller tunnel von 2 aus
+            // room2 reached before room1 => calc max of all tunnels from room2
 
             var toVisit = TunnelsToVisit(room2, openValves);
 
@@ -298,7 +298,7 @@ public class Day16
         {
             dPressure += room1.FlowRate + room2.FlowRate;
 
-            // max aller variationen von tunneln von 1 und 2 aus
+            // room1 and room2 reached at the same time => calc max of all possible variations of tunnels from room1 and room2
 
             System.Diagnostics.Debug.Assert(TunnelsToVisit(room1, openValves).Count() == TunnelsToVisit(room2, openValves).Count());
             var toVisit = TunnelsToVisit(room1, openValves).ToArray();

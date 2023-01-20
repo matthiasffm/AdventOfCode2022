@@ -4,15 +4,16 @@ using NUnit.Framework;
 using FluentAssertions;
 
 using static System.Math;
+using matthiasffm.Common.Math;
 
 [TestFixture]
 public class Day14
 {
-    private static (int, int)[][] ParseData(string[] lines) =>
-        lines.Select(line => line.Split(" -> ")
-                                 .Select(pair => (int.Parse(pair.Split(',').ElementAt(0)),
-                                                  int.Parse(pair.Split(',').ElementAt(1))))
-                                 .ToArray())
+    private static Vec2<int>[][] ParseData(string[] lines)
+        => lines.Select(line => line.Split(" -> ")
+                                    .Select(pair => new Vec2<int>(int.Parse(pair.Split(',').ElementAt(0)),
+                                                                  int.Parse(pair.Split(',').ElementAt(1))))
+                                    .ToArray())
              .ToArray();
 
     [Test]
@@ -39,7 +40,7 @@ public class Day14
         Puzzle2(rockPaths, 500).Should().Be(26375);
     }
 
-    private const byte AIR = 0;
+    private const byte AIR  = 0;
     private const byte ROCK = 1;
     private const byte SAND = 2;
 
@@ -50,18 +51,18 @@ public class Day14
     // to the right. If it can't move anymore, it comes to rest and the simulation continues with the next unit of sand.
     //
     // Puzzle == Using your scan, simulate the falling sand. How many units of sand come to rest before sand starts flowing into the abyss below?
-    private static int Puzzle1((int, int)[][] rockPaths, int sandSouceCol)
+    private static int Puzzle1(Vec2<int>[][] rockPaths, int sandSouceCol)
     {
-        var allCols = rockPaths.SelectMany(p => p.Select(r => r.Item1)).ToArray();
+        var allCols = rockPaths.SelectMany(p => p.Select(r => r.X)).ToArray();
         var minCol  = allCols.Min();
         var maxCol  = allCols.Max();
-        var maxRow  = rockPaths.SelectMany(p => p.Select(r => r.Item2)).Max();
+        var maxRow  = rockPaths.SelectMany(p => p.Select(r => r.Y)).Max();
 
         var cave = new byte[maxRow + 1, maxCol - minCol + 1];
         DrawCave(cave, minCol, rockPaths);
 
         var sandUnits = 0;
-        var sandStart = (0, sandSouceCol - minCol);
+        var sandStart = new Vec2<int>(sandSouceCol - minCol, 0);
 
         while(SimulateSand(cave, sandStart) != null)
         {
@@ -78,23 +79,23 @@ public class Day14
     // the sand, blocking the source entirely and stopping the flow of sand into the cave.
     //
     // Puzzle == Using your scan, simulate the falling sand until the source of the sand becomes blocked. How many units of sand come to rest?
-    private static int Puzzle2((int, int)[][] rockPaths, int sandSouceCol)
+    private static int Puzzle2(Vec2<int>[][] rockPaths, int sandSouceCol)
     {
         // Cave is the same like Puzzle1 but there has to be a 'infinite' plane at bottom + 2. Sand only
         // flows diagonally so to reach the top we need bottom + 2 space to the left and to the right in
         // the cave.
 
-        var allCols = rockPaths.SelectMany(p => p.Select(r => r.Item1));
+        var allCols = rockPaths.SelectMany(p => p.Select(r => r.X));
         var minCol  = allCols.Min();
         var maxCol  = allCols.Max();
-        var maxRow  = rockPaths.SelectMany(p => p.Select(r => r.Item2)).Max() + 2; // bottom + 2
+        var maxRow  = rockPaths.SelectMany(p => p.Select(r => r.Y)).Max() + 2; // bottom + 2
 
         var cave = new byte[maxRow + 1, (maxCol - minCol + 1) + 2 * maxRow];
         DrawCave(cave, minCol - maxRow, rockPaths);
         DrawInfiniteBottom(cave, maxRow);
 
         var sandUnits = 0;
-        var sandStart = (0, sandSouceCol - minCol + maxRow);
+        var sandStart = new Vec2<int>(sandSouceCol - minCol + maxRow, 0);
 
         do
         {
@@ -109,52 +110,57 @@ public class Day14
     // move diagonally one step down and to the left. If that tile is blocked, the unit of sand attempts to instead move diagonally one step down and to the
     // right. Sand keeps moving as long as it is able to do so, at each step trying to move down, then down-left, then down-right. If all three possible destinations
     // are blocked, the unit of sand comes to rest and no longer moves.
-    private static (int, int)? SimulateSand(byte[,] cave, (int, int) sand)
+    private static Vec2<int>? SimulateSand(byte[,] cave, Vec2<int> sand)
     {
+        int row = sand.Y;
+        int col = sand.X;
+
         do
         {
-            if(sand.Item1 + 1 >= cave.GetLength(0))
+            if(row + 1 >= cave.GetLength(0))
             {
                 return null; // sand flows over to bottom
             }
-            else if(cave[sand.Item1 + 1, sand.Item2] == AIR)
+            else if(cave[row + 1, col] == AIR)
             {
-                sand = (sand.Item1 + 1, sand.Item2);
+                row++;
             }
-            else if(sand.Item2 <= 0)
+            else if(col <= 0)
             {
                 return null; // sand flows over to left
             }
-            else if(cave[sand.Item1 + 1, sand.Item2 - 1] == AIR)
+            else if(cave[row + 1, col - 1] == AIR)
             {
-                sand = (sand.Item1 + 1, sand.Item2 - 1);
+                col--;
+                row++;
             }
-            else if(sand.Item2 + 1 >= cave.GetLength(1))
+            else if(col + 1 >= cave.GetLength(1))
             {
-                return null; // sand flows over to left
+                return null; // sand flows over to right
             }
-            else if(cave[sand.Item1 + 1, sand.Item2 + 1] == AIR)
+            else if(cave[row + 1, col + 1] == AIR)
             {
-                sand = (sand.Item1 + 1, sand.Item2 + 1);
+                col++;
+                row++;
             }
             else
             {
-                cave[sand.Item1, sand.Item2] = SAND;
-                return sand; // sand comes to rest
+                cave[row, col] = SAND;
+                return new Vec2<int>(col, row); // sand comes to rest
             }
         }
         while(true);
     }
 
     // draws all input rock segments for the cave formation
-    private static byte[,] DrawCave(byte[,] cave, int minCol, (int, int)[][] rockPaths)
+    private static byte[,] DrawCave(byte[,] cave, int minCol, Vec2<int>[][] rockPaths)
     {
-        foreach (var rockPath in rockPaths)
+        foreach(var rockPath in rockPaths)
         {
             var pos = rockPath[0];
-            foreach (var segment in rockPath.Skip(1))
+            foreach(var segment in rockPath.Skip(1))
             {
-                DrawRockSegment(cave, pos with { Item1 = pos.Item1 - minCol }, segment with { Item1 = segment.Item1 - minCol });
+                DrawRockSegment(cave, pos with { X = pos.X - minCol }, segment with { X = segment.X - minCol });
                 pos = segment;
             }
         }
@@ -163,20 +169,20 @@ public class Day14
     }
 
     // draws a single rock formation (line) for the cave formation
-    private static void DrawRockSegment(byte[,] cave, (int, int) start, (int, int) end)
+    private static void DrawRockSegment(byte[,] cave, Vec2<int> start, Vec2<int> end)
     {
-        var diff   = (end.Item1 - start.Item1, end.Item2 - start.Item2);
-        var length = Max(Abs(diff.Item1), Abs(diff.Item2));
+        var diff   = end - start;
+        var length = Max(Abs(diff.X), Abs(diff.Y));
 
-        diff = (diff.Item1 / length, diff.Item2 / length);
+        diff /= length;
 
         for(int i = 0; i <= length; i++)
         {
-            cave[start.Item2, start.Item1] = ROCK;
-            start = (start.Item1 + diff.Item1, start.Item2 + diff.Item2);
+            cave[start.Y, start.X] = ROCK;
+            start += diff;
         }
     }
 
     private static void DrawInfiniteBottom(byte[,] cave, int maxRow) =>
-        DrawRockSegment(cave, (0, maxRow), (cave.GetLength(1) - 1, maxRow));
+        DrawRockSegment(cave, new Vec2<int>(0, maxRow), new Vec2<int>(cave.GetLength(1) - 1, maxRow));
 }

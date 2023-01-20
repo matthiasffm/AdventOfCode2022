@@ -49,8 +49,7 @@ public class Day07
 
         foreach(var line in lines.Skip(1))
         {
-            currentDir = line.Split(' ') switch
-            {
+            currentDir = line.Split(' ') switch {
                 // commands
                 ["$", "ls"]             => currentDir,
                 ["$", "cd", ".."]       => currentDir.Parent!,

@@ -6,7 +6,6 @@ using FluentAssertions;
 [TestFixture]
 public class Day01
 {
-    // parsed the input data and returns all calories every Elf carries
     private static IEnumerable<IEnumerable<int>> ParseData(string[] data) =>
         FileUtils.ParseMultilineTuples(data, cal => int.Parse(cal));
 

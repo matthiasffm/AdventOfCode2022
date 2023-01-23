@@ -122,9 +122,6 @@ public class Day18
         {
             airPocketSize = maybeBubble.Count;
 
-            System.Diagnostics.Debug.Assert(solidCubes.Count + maybeBubble.Count + connectedToOutside.Count ==
-                                            (maxX - minX + 1) * (maxY - minY + 1) * (maxY - minY + 1));
-
             var connectedToOutsideBorder = connectedToOutside.SelectMany(air => DirectNeighbors.Select(n => air + n))
                                                              .Distinct()
                                                              .Where(n => !solidCubes.Contains(n) && maybeBubble.Contains(n))

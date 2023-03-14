@@ -66,24 +66,6 @@ public class Day09
         Puzzle(moves, 10).Should().Be(2793);
     }
 
-    // moves a knot if it is not close enough (d > 1)
-    private static Vec2<int> MoveKnot(Vec2<int> knot, Vec2<int> diff) =>
-        Abs(diff.X) > 1 || Abs(diff.Y) > 1 ?
-            new Vec2<int>(knot.X + Min(1, Abs(diff.X)) * Sign(diff.X),
-                          knot.Y + Min(1, Abs(diff.Y)) * Sign(diff.Y)) :
-            knot;
-
-    // add move to head and then reposition all other knots in the rope
-    private static void MoveRope(Vec2<int>[] rope, Vec2<int> move)
-    {
-        rope[0] = rope.First() + move;
-
-        for(int k = 1; k < rope.Length; k++)
-        {
-            rope[k] = MoveKnot(rope[k], rope[k - 1] - rope[k]);
-        }
-    }
-
     // Consider a rope with a knot at each end; these knots mark the head and the tail of the rope. If the head moves far enough away from the
     // tail, the tail is pulled toward the head. All elements of the rope from head to tail must always be touching at every single move (diagonally adjacent
     // and even overlapping both count as touching). After simulating the ropes moves, you can count up all of the positions the tail visited at least once.
@@ -105,4 +87,22 @@ public class Day09
 
         return tailVisited.Count;
     }
+
+    // add move to head and then reposition all other knots in the rope
+    private static void MoveRope(Vec2<int>[] rope, Vec2<int> move)
+    {
+        rope[0] = rope.First() + move;
+
+        for(int k = 1; k < rope.Length; k++)
+        {
+            rope[k] = MoveKnot(rope[k], rope[k - 1] - rope[k]);
+        }
+    }
+
+    // moves a knot if it is not close enough (d > 1)
+    private static Vec2<int> MoveKnot(Vec2<int> knot, Vec2<int> diff) =>
+        Abs(diff.X) > 1 || Abs(diff.Y) > 1 ?
+            new Vec2<int>(knot.X + Min(1, Abs(diff.X)) * Sign(diff.X),
+                          knot.Y + Min(1, Abs(diff.Y)) * Sign(diff.Y)) :
+            knot;
 }

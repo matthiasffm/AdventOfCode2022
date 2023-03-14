@@ -90,6 +90,7 @@ public class Day19
     {
         // TODO: even pruned this is still tooo slow with 8 seconds runtime
         //       either prune better, time + min(ore to build a robot - 1) or different algorithm
+        //       use dynamic programming instead of recursion and cache queue entries
 
         if(time > endTime)
         {

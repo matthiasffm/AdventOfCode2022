@@ -3,6 +3,8 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+using static System.Numerics.BitOperations;
+
 [TestFixture]
 public class Day03
 {
@@ -39,8 +41,8 @@ public class Day03
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
     private static int Puzzle1(IEnumerable<string> rucksacks) =>
-        rucksacks.Sum(r => FirstSetBit(ToUlong(r.AsSpan()[..(r.Length / 2)])
-                                       & ToUlong(r.AsSpan()[(r.Length / 2)..])));
+        rucksacks.Sum(r => TrailingZeroCount(ToUlong(r.AsSpan()[..(r.Length / 2)])
+                                             & ToUlong(r.AsSpan()[(r.Length / 2)..])));
 
     // The Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For
     // efficiency, within each group of three Elves, the badge is the only item type carried by all three Elves.
@@ -55,9 +57,9 @@ public class Day03
         rucksacks.Where((r, i) => i % 3 == 0)
                  .Zip(rucksacks.Where((r, i) => i % 3 == 1), (r1, r2) => (r1, r2))
                  .Zip(rucksacks.Where((r, i) => i % 3 == 2), (r, r3) => (r.r1, r.r2, r3))
-                 .Sum(r => FirstSetBit(ToUlong(r.r1)
-                                       & ToUlong(r.r2)
-                                       & ToUlong(r.r3)));
+                 .Sum(r => TrailingZeroCount(ToUlong(r.r1)
+                                             & ToUlong(r.r2)
+                                             & ToUlong(r.r3)));
 
     // converts letters to bits [1-53] where every set bit means a letter with this priority is present in letters
     private static ulong ToUlong(ReadOnlySpan<char> letters)
@@ -73,18 +75,4 @@ public class Day03
     }
 
     private static int Priority(char letter) => char.IsLower(letter) ? letter - 'a' + 1 : letter - 'A' + 27;
-
-    // finds the index of the first set bit (should be only one set bit here in this puzzle)
-    private static int FirstSetBit(ulong bits)
-    {
-        for(int i = 0; i < 60; i++)
-        {
-            if((bits & (ulong)(1L << i)) != 0)
-            {
-                return i;
-            }
-        }
-
-        return -1;
-    }
 }

@@ -1,6 +1,6 @@
 namespace AdventOfCode2022;
 
-public static class EnumerableExtension
+public static class EnumerableExtensions
 {
     public static void For<T>(this IEnumerable<T> coll, Action<T> action)
     {

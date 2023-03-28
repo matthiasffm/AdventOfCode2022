@@ -2,25 +2,21 @@ namespace AdventOfCode2022;
 
 using NUnit.Framework;
 using FluentAssertions;
+using System.Collections;
 
-using matthiasffm.Common.Math;
-using NUnit.Framework.Internal;
-
-// TODO: 2s too slow
-//       - most of the time is spent in HasNeighbor and CanMoveDir where some positions
-//         are looked up twice in the hashset. this could be avoided if HasNeighbor returns
-//         output compatible with CanMoveDir (like a bitfield for all 8 neighbors)
-//       - the data is dense, so a 200x200 bitmap may be small enough to be way faster than the
-//         hashset lookups
+// TODO: 300ms is still too slow
+//       bitmap is around 2x faster than hasmap with positions
+//       parallelization doesn't bring any improvement
+//       only option left seems to be replacing the bitarry with SIMD ops
 
 [TestFixture]
 public partial class Day23
 {
-    private static Vec2<int>[] ParseData(string[] map) =>
+    private static (int, int)[] ParseData(string[] map) =>
         map.Select((l, y) => (l, y))
            .SelectMany(line => line.l.Select((c, x) => (c, x))
                                      .Where(pos => pos.c == '#')
-                                     .Select(pos => new Vec2<int>(pos.x, line.y)))
+                                     .Select(pos => (pos.x, line.y)))
            .ToArray();
 
     [Test]
@@ -79,139 +75,194 @@ public partial class Day23
     // round, the Elves would try proposing a move to the south first, then west, then east, then north.
     //
     // Puzzle == Consider the ground tiles contained by the smallest rectangle that contains every Elf. How many empty ground tiles does that rectangle contain?
-    private static int Puzzle1(IEnumerable<Vec2<int>> elves, int rounds)
+    private static int Puzzle1(IEnumerable<(int, int)> elves, int rounds)
     {
-        var startingDir = 0; // start N
+        var startingDir = 0; // start north
+
+        var map = new ElvesMap(elves);
 
         for(int round = 0; round < rounds; round++)
         {
-            elves = SimulateRound(elves, startingDir);
+            SimulateRound(map, startingDir);
 
             // rotate starting direction for elve movement for the next round
             startingDir = (startingDir + 1) % 4;
         }
 
-        return EmptyGroundTiles(elves);
+        return (map.MaxX - map.MinX + 1) *
+               (map.MaxY - map.MinY + 1) - elves.Count();
     }
 
     // It seems you're on the right track. Finish simulating the process and figure out where the Elves need to go. How many rounds did you save them?
     //
     // Puzzle = What is the number of the first round where no Elf moves?
-    private static int Puzzle2(IEnumerable<Vec2<int>> elves)
+    private static int Puzzle2(IEnumerable<(int, int)> elves)
     {
         var startingDir = 0; // start N
 
         int round = 1;
 
+        var map = new ElvesMap(elves);
+
         while(true)
         {
-            var newElvePos = SimulateRound(elves, startingDir);
-            if(elves.SequenceEqual(newElvePos))
+            if(!SimulateRound(map, startingDir))
             {
                 return round;
             }
 
-            elves = newElvePos;
             round++;
 
             // rotate starting direction for elve movement for the next round
-            startingDir = (startingDir + 1) % 4;
+            startingDir = (startingDir+ 1) % 4;
         }
     }
 
-    private static IEnumerable<Vec2<int>> SimulateRound(IEnumerable<Vec2<int>> elves, int startingDir)
+    // simulates the elves moves according to the rules
+    // the bitmap content of map is modified in place(!) in this process
+    // if no move is made in a round this method returns false
+    private static bool SimulateRound(ElvesMap map, int startingDir)
     {
-        var elvePos        = new HashSet<Vec2<int>>(elves);
-        int elveDebugCount = elvePos.Count;
+        var proposedMoves  = new List<((int, int), (int, int))>(2500);
 
-        var stationaryElves = new List<Vec2<int>>();
-        var movedElves      = new List<(Vec2<int>, Vec2<int>)>();
+        int[] neighbors = new int[4];
 
-        // move elves
+        // record proposed move vectors of all elves
 
-        foreach(var elve in elves)
+        for(int y = map.MinY; y <= map.MaxY; y++)
         {
-            if(HasNeighbor(elve, elvePos))
+            for(int x = map.MinX; x <= map.MaxX; x++)
             {
-                bool moved = false;
-                for(int dir = startingDir; dir < startingDir + 4; dir++)
+                if(map.Get(x, y) == 0)
                 {
-                    if(CanMoveDir(elve, dir % 4, elvePos))
+                    continue;
+                }
+
+                map.FillNeigborValues(x, y, neighbors);
+                if(neighbors[0] > 0 || neighbors[1] > 0 || neighbors[2] > 0 || neighbors[3] > 0)
+                {
+                    for(int dir = startingDir; dir < startingDir + 4; dir++)
                     {
-                        movedElves.Add((elve, elve + DirOffset[dir % 4]));
-                        moved = true;
-                        break;
+                        if(neighbors[dir % 4] == 0)
+                        {
+                            proposedMoves.Add(((x, y), (x + DirOffset[dir % 4].Item1, y + DirOffset[dir % 4].Item2)));
+                            break;
+                        }
                     }
                 }
-
-                if(!moved)
-                {
-                    stationaryElves.Add(elve);
-                }
-            }
-            else
-            {
-                stationaryElves.Add(elve);
             }
         }
 
-        // resolve collisions and consolidate elve positions for next round
+        // resolve collisions and move only these elves without collision to their new position
 
-        elvePos.Clear();
+        bool modified = false;
 
-        foreach(var g in movedElves.GroupBy(e => e.Item2))
+        foreach(var move in proposedMoves.GroupBy(e => e.Item2))
         {
-            if(g.Count() == 1)
+            if(move.Count() == 1)
             {
-                elvePos.Add(g.First().Item2);
-            }
-            else
-            {
-                foreach(var elve in g)
-                {
-                    elvePos.Add(elve.Item1);
-                }
+                var from = move.First().Item1;
+                var to   = move.First().Item2;
+                map.Set(from.Item1, from.Item2, false);
+                map.Set(to.Item1, to.Item2);
+
+                modified = true;
             }
         }
 
-        foreach(var stationary in stationaryElves)
-        {
-            elvePos.Add(stationary);
-        }
-
-        return elvePos;
+        return modified;
     }
 
-    private static readonly Vec2<int>[] DirOffset = new[] {
-        new Vec2<int>( 0, -1), // N
-        new Vec2<int>( 0,  1), // S
-        new Vec2<int>(-1,  0), // W
-        new Vec2<int>( 1,  0), // E
+    private static readonly (int, int)[] DirOffset = new[] {
+        ( 0, -1), // N
+        ( 0,  1), // S
+        (-1,  0), // W
+        ( 1,  0), // E
     };
 
-    private static readonly Vec2<int>[] Neighbors = new[] {
-        new Vec2<int>(-1, -1), new Vec2<int>(0, -1), new Vec2<int>(1, -1),
-        new Vec2<int>(-1,  0),                       new Vec2<int>(1,  0),
-        new Vec2<int>(-1,  1), new Vec2<int>(0,  1), new Vec2<int>(1,  1),
-    };
+    private class ElvesMap
+    {
+        private readonly BitArray   _bits;
+        private readonly int        _width;
+        private readonly int        _height;
+        private          int        _minX;
+        private          int        _maxX;
+        private          int        _minY;
+        private          int        _maxY;
 
-    private static bool HasNeighbor(Vec2<int> elve, HashSet<Vec2<int>> elves) =>
-        Neighbors.Select(n => elve + n)
-                 .Any(n => elves.Contains(n));
+        public int MinX { get { return _minX; } }
+        public int MaxX { get { return _maxX; } }
+        public int MinY { get { return _minY; } }
+        public int MaxY { get { return _maxY; } }
 
-    private static readonly Vec2<int>[][] NeighborsForDir = new[] {
-        new[] { new Vec2<int>(-1, -1), new Vec2<int>( 0, -1), new Vec2<int>( 1, -1),}, // N
-        new[] { new Vec2<int>(-1,  1), new Vec2<int>( 0,  1), new Vec2<int>( 1,  1),}, // S
-        new[] { new Vec2<int>(-1, -1), new Vec2<int>(-1,  0), new Vec2<int>(-1,  1),}, // W
-        new[] { new Vec2<int>( 1, -1), new Vec2<int>( 1,  0), new Vec2<int>( 1,  1),}, // E
-    };
+        public ElvesMap(IEnumerable<(int, int)> elves)
+        {
+            var minX    = elves.Min(e => e.Item1);
+            var maxX    = elves.Max(e => e.Item1);
+            var offsetX = maxX - minX + 1;
+            _width = 3 * (maxX - minX + 1);
 
-    private static bool CanMoveDir(Vec2<int> elve, int dir, IEnumerable<Vec2<int>> elves) =>
-        !NeighborsForDir[dir].Any(d => elves.Contains(elve + d));
+            var minY    = elves.Min(e => e.Item2);
+            var maxY    = elves.Max(e => e.Item2);
+            var offsetY = maxY - minY + 1;
+            _height = 3 * (maxY - minY + 1);
 
-    // counts the number of empty tiles in the rectangle spanned out by the elve positions
-    private static int EmptyGroundTiles(IEnumerable<Vec2<int>> elves) =>
-        (elves.Max(e => e.X) - elves.Min(e => e.X) + 1) *
-        (elves.Max(e => e.Y) - elves.Min(e => e.Y) + 1) -
-        elves.Count();
+            _bits = new BitArray(_height * _width);
+
+            _minX = _minY = int.MaxValue;
+            _maxX = _maxY = -1;
+
+            foreach(var elve in elves)
+            {
+                Set(elve.Item1 - minX + offsetX, elve.Item2 - minY + offsetY);
+            }
+        }
+
+        public void Set(int x, int y, bool bit = true)
+        {
+            if(x > _maxX)
+            {
+                _maxX = x;
+            }
+            if(x < _minX)
+            {
+                _minX = x;
+            }
+
+            if(y > _maxY)
+            {
+                _maxY = y;
+            }
+            if(y < _minY)
+            {
+                _minY = y;
+            }
+
+            _bits.Set(x + y * _width, bit);
+        }
+
+        public int Get(int x, int y)
+        {
+            if(x < _minX || x > _maxX || y < _minY || y > _maxY)
+            {
+                return 0;
+            }
+            else
+            {
+                return _bits.Get(x + y * _width) ? 1 : 0;
+            }
+        }
+
+        public void FillNeigborValues(int x, int y, int[] neighbors)
+        {
+            var top    = x - 1 + (y - 1) * _width;
+            var middle = top + _width;
+            var bottom = middle + _width;
+
+            neighbors[0] = (_bits[top]     || _bits[top + 1]    || _bits[top + 2])    ? 1 : 0; // N
+            neighbors[1] = (_bits[bottom]  || _bits[bottom + 1] || _bits[bottom + 2]) ? 1 : 0; // S
+            neighbors[2] = (_bits[top]     || _bits[middle]     || _bits[bottom])     ? 1 : 0; // W
+            neighbors[3] = (_bits[top + 2] || _bits[middle + 2] || _bits[bottom + 2]) ? 1 : 0; // E
+        }
+    }
 }

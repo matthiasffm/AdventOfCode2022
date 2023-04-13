@@ -10,6 +10,7 @@ class Day03Solver {
     // exactly one of the two compartments. The Elf that did the packing failed to follow this rule for exactly
     // one item type per rucksack.
     // To help prioritize item rearrangement, every item type can be converted to a priority (= number of letter). 
+    //
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
     def puzzle1(rucksacks: Seq[String]) : Int = rucksacks.map(r => priority(r.slice(0, r.length / 2).toSet
@@ -23,6 +24,7 @@ class Day03Solver {
     // rucksack, and at most two of the Elves will be carrying any other item type.
     // Additionally, nobody wrote down which item type corresponds to each group's badges. The only way to tell
     // which item type is the right one is by finding the one that is common between all three Elves in each group.
+    //
     // Puzzle == Find the item type that corresponds to the badges of each three-Elf group. What is the sum of
     //           the priorities of those item types?
     def puzzle2(rucksacks: Seq[String]) : Int = rucksacks.grouped(3)

@@ -27,6 +27,7 @@ class Day05Solver {
     // The ship has a giant cargo crane (CrateMover 9000) capable of moving crates between stacks. The Elves have a drawing
     // of the starting stacks of and crates and the moving procedure as input. In each step of the movement procedure, a
     // quantity of crates is moved from one stack to a different stack _one_ crate at a time.
+    //
     // Puzzle == The Elves just need to know which crate will end up on top of each stack at the end. So you should combine these
     //           crate letters together and give the Elves the resulting message.
     def puzzle1(stacks: Seq[List[Char]], moves: List[Move]) : String = moves match {
@@ -44,6 +45,7 @@ class Day05Solver {
 
     // The CrateMover 9001 is notable for many new and exciting features, especially the ability to pick up and move multiple
     // crates at once. The action of moving multiple crates from one stack to another means that those moved crates stay _in the same order_.
+    //
     // Puzzle == After the rearrangement procedure completes, what crate ends up on top of each stack? Give the Elves the resulting message.
     def puzzle2(stacks: Seq[List[Char]], moves: List[Move]) : String = moves match {
             case head :: tail          => puzzle2(moveCrates(stacks, head), tail)

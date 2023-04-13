@@ -51,11 +51,13 @@ class Day07Solver {
     // Since the disk is full, your first step should be to find directories that are good candidates for deletion. To do this, you need to determine the total
     // size of each directory. The total size of a directory is the sum of the sizes of the files it contains, directly or indirectly. To begin, find all of the
     // directories with a total size of at most 100000.
+    //
     // Puzzle == What is the sum of the total sizes of those directories?
     def puzzle1(root: Dir) : Int = root.sizes().filter(s => s <= 100000).sum
 
     // The total disk space available to the filesystem is 70000000. To run the update, you need unused space of at least 30000000. You need to find a
     // directory you can delete that will free up enough space to run the update.
+    //
     // Puzzle == Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total
     //           size of that directory?
     def puzzle2(root: Dir) : Int = {
@@ -96,13 +98,13 @@ class Day07 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "sum of the total sizes of directories <= 100000 in the sample data" in {
         val day7 = new Day07Solver
-        var rootDir = day7.parseData(sampleData);
+        var rootDir = day7.parseData(sampleData)
         day7.puzzle1(rootDir) should be (95437)
     }
 
     "Puzzle 2" should "find the smallest directory in the sample data that, if deleted, would free up enough space on the filesystem to run the update" in {
         val day7 = new Day07Solver
-        var rootDir = day7.parseData(sampleData);
+        var rootDir = day7.parseData(sampleData)
         day7.puzzle2(rootDir) should be (24933642)
     }
 
@@ -112,13 +114,13 @@ class Day07 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "sum of the total sizes of directories <= 100000 in the AoC data" in {
         val day7 = new Day07Solver
-        var rootDir = day7.parseData(realData);
+        var rootDir = day7.parseData(realData)
         day7.puzzle1(rootDir) should be (1792222)
     }
 
     "Puzzle 2" should "find the smallest directory in the AoC data that, if deleted, would free up enough space on the filesystem to run the update" in {
         val day7 = new Day07Solver
-        var rootDir = day7.parseData(realData);
+        var rootDir = day7.parseData(realData)
         day7.puzzle2(rootDir) should be (1112963)
     }
 }

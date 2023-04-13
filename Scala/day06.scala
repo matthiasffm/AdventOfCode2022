@@ -8,9 +8,11 @@ class Day06Solver {
 
     // To fix the Elves communication system, you need to add a subroutine to the device that detects a start-of-packet marker in the datastream. In
     // the protocol being used by the Elves, the start of a packet is indicated by a sequence of four characters that are all different.
+    //
     // Puzzle1 == How many characters need to be processed before the first start-of-packet marker is detected?
-    // 
+    //
     // A start-of-message marker is just like a start-of-packet marker, except it consists of 14 distinct characters rather than 4.
+    //
     // Puzzle2 == How many characters need to be processed before the first start-of-message marker is detected?
     def puzzle(msg: String, size: Int) : Int = 1 + (size - 1 to msg.length).find(i => msg.slice(i - size + 1, i + 1).toSet.size == size)
                                                                            .getOrElse(0)

@@ -20,6 +20,7 @@ class Day04Solver {
     // Elves have been assigned the job of cleaning up sections of the camp. Every section has a unique ID number, and
     // each Elf is assigned a range of section IDs. However, as some of the Elves compare their section assignments with
     // each other, they've noticed that many of the assignments overlap.
+    //
     // Puzzle == In how many assignment pairs does one range fully contain the other?
     def puzzle1(pairs: Seq[(Assignment, Assignment)]) : Int = pairs.count(p => p._1.contains(p._2) || p._2.contains(p._1))
 

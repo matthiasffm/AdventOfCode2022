@@ -11,7 +11,7 @@ class Day09Solver {
         def minus(d: Vec2) : Vec2 = new Vec2(this.x - d.x, this.y - d.y)
     }
 
-    case class Move(direction: Vec2, repeat: Int);
+    case class Move(direction: Vec2, repeat: Int)
 
     def parseMove(line: String): Move = {
         val dist = line.substring(2).toInt
@@ -29,6 +29,7 @@ class Day09Solver {
     // Consider a rope with a knot at each end; these knots mark the head and the tail of the rope. If the head moves far enough away from the
     // tail, the tail is pulled toward the head. All elements of the rope from head to tail must always be touching at every single move (diagonally adjacent
     // and even overlapping both count as touching). After simulating the ropes moves, you can count up all of the positions the tail visited at least once.
+    //
     // Puzzle == Simulate the series of motions. How many positions does the tail of the rope visit at least once?
     def puzzle(moves: Seq[Move], ropeLength: Int) : Int = {
         var rope = Array.fill[Vec2](ropeLength)(Vec2(0, 0)).toList
@@ -38,12 +39,12 @@ class Day09Solver {
 
         for(move <- moves) {
             for(m <- 0 to move.repeat - 1) {
-                rope = moveRope(rope, move.direction);
-                tailVisited += rope.last;
+                rope = moveRope(rope, move.direction)
+                tailVisited += rope.last
             }
         }
 
-        return tailVisited.size;
+        return tailVisited.size
     }
 
     // add diff to head and then reposition all other knots in the rope recursively
@@ -54,7 +55,7 @@ class Day09Solver {
 
     // calculates the move for the next knot if it is not close enough (d > 1)
     def diffForNextKnot(prevKnot: Vec2, nextKnot: Vec2) : Vec2 = {
-        val diff = prevKnot.minus(nextKnot);
+        val diff = prevKnot.minus(nextKnot)
 
         if(diff.x.abs > 1 || diff.y.abs > 1) {
             return Vec2(diff.x.abs.min(1) * diff.x.sign, diff.y.abs.min(1) * diff.y.sign)
@@ -72,15 +73,15 @@ class Day09 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "count how many positions the tail of a 2-element rope visits in the sample data" in {
         val day9 = new Day09Solver
-        var moves1 = day9.parseData(sampleData1);
+        var moves1 = day9.parseData(sampleData1)
         day9.puzzle(moves1, 2) should be (13)
     }
 
     "Puzzle 2" should "count how many positions the tail of a 10-element rope visits in the sample data" in {
         val day9 = new Day09Solver
-        var moves1 = day9.parseData(sampleData1);
+        var moves1 = day9.parseData(sampleData1)
         day9.puzzle(moves1, 10) should be (1)
-        var moves2 = day9.parseData(sampleData2);
+        var moves2 = day9.parseData(sampleData2)
         day9.puzzle(moves2, 10) should be (36)
     }
 
@@ -90,13 +91,13 @@ class Day09 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "count how many positions the tail of a 2-element rope visits in the AoC data" in {
         val day9 = new Day09Solver
-        var moves = day9.parseData(realData);
+        var moves = day9.parseData(realData)
         day9.puzzle(moves, 2) should be (6745)
     }
 
     "Puzzle 2" should "count how many positions the tail of a 10-element rope visits in the AoC data" in {
         val day9 = new Day09Solver
-        var moves = day9.parseData(realData);
+        var moves = day9.parseData(realData)
         day9.puzzle(moves, 10) should be (2793)
     }
 }

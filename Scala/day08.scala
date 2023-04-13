@@ -15,6 +15,7 @@ class Day08Solver {
     // number of trees that are visible from outside the grid when looking directly along a row or column.
     // A tree is visible if all of the other trees between it and an edge of the grid are shorter than it. Only consider trees in
     // the same row or column; that is, only look up, down, left, or right from any given tree.
+    //
     // Puzzle == Consider your map; how many trees are visible from outside the grid?
     def puzzle1(trees: Array[Array[Byte]]) : Int = (1 to trees.length - 2).flatMap(row => (1 to trees.length - 2).map(col => (row, col)))
                                                                           .filter((row, col) => visible(trees, trees(row)(col), row, col))
@@ -31,6 +32,7 @@ class Day08Solver {
     // To measure the viewing distance from a given tree, look up, down, left, and right from that tree; stop if you reach an
     // edge or at the first tree that is the same height or taller than the tree under consideration. (so a tree on the edge == 0)
     // A tree's scenic score is found by multiplying together its viewing distance in each of the four directions.
+    //
     // Puzzle == What is the highest scenic score possible for any tree?
     def puzzle2(trees: Array[Array[Byte]]) : Int = (0 to trees.length - 1).flatMap(row => (0 to trees.length - 1).map(col => (row, col)))
                                                                           .map((row, col) => scenicScore(trees, trees(row)(col), row, col))
@@ -45,10 +47,10 @@ class Day08Solver {
     def viewingDistance(tree: Byte, lineOfSight: Seq[Byte]) : Int = {
         val los = lineOfSight.takeWhile(t => t < tree).length
         if(los < lineOfSight.length) {
-            return los + 1;
+            return los + 1
         }
         else {
-            return los;
+            return los
         }
     }
 }
@@ -65,13 +67,13 @@ class Day08 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "count all trees visible from outside the forest in the sample data" in {
         val day8 = new Day08Solver
-        var trees = day8.parseData(sampleData);
+        var trees = day8.parseData(sampleData)
         day8.puzzle1(trees) should be (21)
     }
 
     "Puzzle 2" should "find the tree with the most scenic score in the sample data" in {
         val day8 = new Day08Solver
-        var trees = day8.parseData(sampleData);
+        var trees = day8.parseData(sampleData)
         day8.puzzle2(trees) should be (8)
     }
 
@@ -81,13 +83,13 @@ class Day08 extends AnyFlatSpec with should.Matchers {
 
     "Puzzle 1" should "count all trees visible from outside the forest in the AoC data" in {
         val day8 = new Day08Solver
-        var trees = day8.parseData(realData);
+        var trees = day8.parseData(realData)
         day8.puzzle1(trees) should be (1717)
     }
 
     "Puzzle 2" should "find the tree with the most scenic score in the AoC data" in {
         val day8 = new Day08Solver
-        var trees = day8.parseData(realData);
+        var trees = day8.parseData(realData)
         day8.puzzle2(trees) should be (321975)
     }
 }

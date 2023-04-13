@@ -248,8 +248,8 @@ public partial class Day24
         var height = blizzardFreeCells[0].vertical.Height;
 
         var trip1 = Trip(blizzardFreeCells, (0, 0), (width - 1, height - 1), 1);
-        var trip2 = Trip(blizzardFreeCells, (width - 1, height - 1), (0, 0), trip1);
-        var trip3 = Trip(blizzardFreeCells, (0, 0), (width - 1, height - 1), trip2);
+        var trip2 = Trip(blizzardFreeCells, (width - 1, height - 1), (0, 0), trip1 + 1);
+        var trip3 = Trip(blizzardFreeCells, (0, 0), (width - 1, height - 1), trip2 + 1);
 
         return trip3;
     }

@@ -3,6 +3,10 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+// TODO: even pruned this is still tooo slow with 8 seconds runtime
+//       either prune better, time + min(ore to build a robot - 1) or different algorithm
+//       use dynamic programming instead of recursion and cache queue entries
+
 [TestFixture]
 public class Day19
 {
@@ -88,10 +92,6 @@ public class Day19
                                  int oreRobots, int clayRobots, int obsidianRobots, int geodeRobots,
                                  int time, int endTime)
     {
-        // TODO: even pruned this is still tooo slow with 8 seconds runtime
-        //       either prune better, time + min(ore to build a robot - 1) or different algorithm
-        //       use dynamic programming instead of recursion and cache queue entries
-
         if(time > endTime)
         {
             return geodes;

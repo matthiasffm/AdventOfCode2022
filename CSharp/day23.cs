@@ -220,22 +220,12 @@ public partial class Day23
 
         public void Set(int x, int y, bool bit = true)
         {
-            if(x > _maxX)
+            if(bit)
             {
-                _maxX = x;
-            }
-            if(x < _minX)
-            {
-                _minX = x;
-            }
-
-            if(y > _maxY)
-            {
-                _maxY = y;
-            }
-            if(y < _minY)
-            {
-                _minY = y;
+                _minX = Math.Min(x, _minX);
+                _maxX = Math.Max(x, _maxX);
+                _minY = Math.Min(y, _minY);
+                _maxY = Math.Max(y, _maxY);
             }
 
             _bits.Set(x + y * _width, bit);

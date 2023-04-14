@@ -130,13 +130,13 @@ class Day11 extends AnyFlatSpec with should.Matchers {
            |    If true: throw to monkey 0
            |    If false: throw to monkey 1""".stripMargin
 
-    "Puzzle 1" should " in the sample data" in {
+    "Puzzle 1" should "calculate the level of monkey business in the sample data after 20 rounds" in {
         val day11 = new Day11Solver
         val monkeys = day11.parseData(sampleData)
         day11.puzzle1(monkeys) should be (10605)
     }
 
-    "Puzzle 2" should " in the sample data" in {
+    "Puzzle 2" should "calculate the level of monkey business in the sample data after 10000 rounds" in {
         val day11 = new Day11Solver
         val monkeys = day11.parseData(sampleData)
         day11.puzzle2(monkeys) should be (2713310158L)
@@ -146,13 +146,13 @@ class Day11 extends AnyFlatSpec with should.Matchers {
                          .getLines()
                          .mkString("\n")
 
-    "Puzzle 1" should " in the AoC data" in {
+    "Puzzle 1" should "calculate the level of monkey business in the AoC data after 20 rounds" in {
         val day11 = new Day11Solver
         val monkeys = day11.parseData(realData)
         day11.puzzle1(monkeys) should be (99840)
     }
 
-    "Puzzle 2" should " in the AoC data" in {
+    "Puzzle 2" should "calculate the level of monkey business in the AoC data after 10000 rounds" in {
         val day11 = new Day11Solver
         val monkeys = day11.parseData(realData)
         day11.puzzle2(monkeys) should be (20683044837L)

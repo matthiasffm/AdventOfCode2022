@@ -16,14 +16,12 @@ class Day10Solver {
     def puzzle1(instructions: List[String]) : Int = sumSignalStrengths(0, 1, instructions)
 
     def sumSignalStrengths(clock: Int, x: Int, instructions: List[String]) : Int = instructions match {
-        case "noop" :: tail => signalStrength(clock + 1, x) +
-                               sumSignalStrengths(clock + 1, x, tail)
-
-        case head :: tail   => signalStrength(clock + 1, x) +
-                               signalStrength(clock + 2, x) +
-                               sumSignalStrengths(clock + 2, addX(x, head), tail)
-
-        case Nil            => 0
+        case "noop"         :: tail => signalStrength(clock + 1, x) +
+                                       sumSignalStrengths(clock + 1, x, tail)
+        case s"addx $toAdd" :: tail => signalStrength(clock + 1, x) +
+                                       signalStrength(clock + 2, x) +
+                                       sumSignalStrengths(clock + 2, x + toAdd.toInt, tail)
+        case _                      => 0
     }
 
     def signalStrength(clock: Int, x: Int) : Int = if((clock + 20) % 40 == 0) then x * clock else 0
@@ -39,13 +37,11 @@ class Day10Solver {
     def puzzle2(instructions: List[String]) : String = raceTheBeam(0, 1, instructions).mkString
 
     def raceTheBeam(clock: Int, spritePos: Int, instructions: List[String]) : List[Char] = instructions match {
-        case "noop" :: tail => moveBeam(clock + 1, spritePos) ::: raceTheBeam(clock + 1, spritePos, tail)
-
-        case head :: tail   => moveBeam(clock + 1, spritePos) :::
-                               moveBeam(clock + 2, spritePos) :::
-                               raceTheBeam(clock + 2, addX(spritePos, head), tail)
-
-        case Nil            => Nil
+        case "noop"         :: tail => moveBeam(clock + 1, spritePos) ::: raceTheBeam(clock + 1, spritePos, tail)
+        case s"addx $toAdd" :: tail => moveBeam(clock + 1, spritePos) :::
+                                       moveBeam(clock + 2, spritePos) :::
+                                       raceTheBeam(clock + 2, spritePos + toAdd.toInt, tail)
+        case _                      => Nil
     }
 
     // moves the beam to the next location and adds a horizontal blank at the end of the line
@@ -54,9 +50,7 @@ class Day10Solver {
     // draws a # if the beam at its current screen pos hits the sprite
     def nextPixel(screenX: Int, spritePos: Int) : Char = if(screenX >= (spritePos - 1) && screenX <= (spritePos + 1)) '#' else '.'
 
-    def hBlanc(clock: Int) : List[Char] = if(clock % 40 == 0 && clock < 240) List('\n') else Nil;
-
-    def addX(x: Int, addxInstruction: String) = x + addxInstruction.drop(5).toInt
+    def hBlanc(clock: Int) : List[Char] = if(clock % 40 == 0 && clock < 240) List('\n') else Nil
 }
 
 class Day10 extends AnyFlatSpec with should.Matchers {
@@ -77,12 +71,12 @@ class Day10 extends AnyFlatSpec with should.Matchers {
                           "noop", "addx -10", "noop", "noop", "addx 20", "addx 1", "addx 2", "addx 2", "addx -6", "addx -11",
                           "noop", "noop", "noop")
 
-    "Puzzle 1" should " in the sample data" in {
+    "Puzzle 1" should "sum the signal strength with the instructions in the sample data" in {
         val day10 = new Day10Solver
         day10.puzzle1(sampleData) should be (13140)
     }
 
-    "Puzzle 2" should " in the sample data" in {
+    "Puzzle 2" should "render the image with the instructions in the sample data" in {
         val day10 = new Day10Solver
         day10.puzzle2(sampleData) should be (
             "##..##..##..##..##..##..##..##..##..##..\n" +
@@ -97,12 +91,12 @@ class Day10 extends AnyFlatSpec with should.Matchers {
                          .getLines
                          .toList
 
-    "Puzzle 1" should " in the AoC data" in {
+    "Puzzle 1" should "sum the signal strength with the instructions in the AoC data" in {
         val day10 = new Day10Solver
         day10.puzzle1(realData) should be (14860)
     }
 
-    "Puzzle 2" should " in the AoC data" in {
+    "Puzzle 2" should "render the image with the instructions in the AoC data" in {
         val day10 = new Day10Solver
         day10.puzzle2(realData) should be (
             "###...##..####.####.#..#.#..#.###..#..#.\n" +

@@ -7,9 +7,7 @@ import matchers._
 class Day07Solver {
 
     class Dir(var dirs: List[Dir], val parent: Dir, var fileSizes: Int) {
-        def this(parent: Dir) = {
-            this(List[Dir](), parent, 0)
-        }
+        def this(parent: Dir) = this(List[Dir](), parent, 0)
 
         def addDir() : Dir = {
             val newDir = new Dir(this)
@@ -22,8 +20,8 @@ class Day07Solver {
             return this
         }
 
-        def size()  : Int       = this.fileSizes + this.dirs.map(d => d.size()).sum
-        def sizes() : List[Int] = this.size() :: this.dirs.flatMap(d => d.sizes())
+        def size()  : Int       = this.fileSizes + this.dirs.map(_.size()).sum
+        def sizes() : List[Int] = this.size() :: this.dirs.flatMap(_.sizes())
     }
 
     def parseData(input: Seq[String]) : Dir = {
@@ -32,7 +30,7 @@ class Day07Solver {
         var currentDir = root
 
         // compared to c# solution here we ignore all names and individual sizes, we only care about
-        // directory sizes and the directory structure (this may be a bit short sighted for the coming days but ...)
+        // directory sizes and the directory structure
 
         for(line <- input.tail) {
             currentDir = line match {
@@ -53,7 +51,7 @@ class Day07Solver {
     // directories with a total size of at most 100000.
     //
     // Puzzle == What is the sum of the total sizes of those directories?
-    def puzzle1(root: Dir) : Int = root.sizes().filter(s => s <= 100000).sum
+    def puzzle1(root: Dir) : Int = root.sizes().filter(_ <= 100000).sum
 
     // The total disk space available to the filesystem is 70000000. To run the update, you need unused space of at least 30000000. You need to find a
     // directory you can delete that will free up enough space to run the update.
@@ -64,7 +62,7 @@ class Day07Solver {
         val unused = 70000000 - root.size()
         val neededForUpdate = 30000000 - unused
 
-        return root.sizes().filter(s => s >= neededForUpdate).min
+        return root.sizes().filter(_ >= neededForUpdate).min
     }
 }
 

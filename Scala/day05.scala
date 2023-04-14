@@ -9,17 +9,16 @@ class Day05Solver {
     case class Move(count: Int, from: Int, to: Int)
 
     def parseData(input: Seq[String]) : (Seq[List[Char]], List[Move]) = {
-        val moves = input.filter(s => s.contains("move"))
+        val moves = input.filter(_.contains("move"))
                          .map {
                               case s"move $count from $from to $to" => Move(count.toInt, from.toInt - 1, to.toInt - 1)
                           }
                          .toList
 
-        val nmbrStacks = input.map(s => s.count(c => c == '[')).max
-        val stacks = (0 to nmbrStacks - 1).map(i =>
-            input.filter(s => s.contains('[') && s(i * 4 + 1) != ' ')
-                               .map(s => s(i * 4 + 1))
-                               .toList)
+        val nmbrStacks = input.map(_.count(_ == '[')).max
+        val stacks = (0 to nmbrStacks - 1).map(i => input.filter(s => s.contains('[') && s(i * 4 + 1) != ' ')
+                                                         .map(s => s(i * 4 + 1))
+                                                         .toList)
 
         return (stacks.toSeq, moves)
     }
@@ -33,7 +32,7 @@ class Day05Solver {
     def puzzle1(stacks: Seq[List[Char]], moves: List[Move]) : String = moves match {
             case Move(1, _, _) :: tail => puzzle1(moveCrate(stacks, Move(1, moves.head.from, moves.head.to)), tail)
             case head :: tail          => puzzle1(moveCrate(stacks, head), Move(head.count - 1, head.from, head.to) :: tail)
-            case Nil                   => stacks.map(s => s.head).mkString
+            case Nil                   => stacks.map(_.head).mkString
         }
 
     // moves the top crate from one stack to another and returns the new stack configuration
@@ -49,7 +48,7 @@ class Day05Solver {
     // Puzzle == After the rearrangement procedure completes, what crate ends up on top of each stack? Give the Elves the resulting message.
     def puzzle2(stacks: Seq[List[Char]], moves: List[Move]) : String = moves match {
             case head :: tail          => puzzle2(moveCrates(stacks, head), tail)
-            case Nil                   => stacks.map(s => s.head).mkString
+            case Nil                   => stacks.map(_.head).mkString
         }
 
     // moves move.count crates from one stack to another and returns the new stack configuration

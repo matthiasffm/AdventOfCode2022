@@ -6,31 +6,28 @@ import matchers._
 
 class Day01Solver {
 
-    def parse(data: Seq[String]) : Seq[Seq[Int]] = {
+    def parse(data: Seq[String]) : Seq[Seq[Int]] =
         return data.map(s => s match {
-                                        case "" => "#"
-                                        case _  => s
-                                    })
+                                   case "" => "#"
+                                   case _  => s
+                               })
                         .mkString(",")
                         .split("#").toSeq
-                        .map(s => s.split(",").toSeq
-                                   .filter(s => s != "")
-                                   .map(nmbr => nmbr.toInt))
-    }
+                        .map(_.split(",").toSeq.filter(_ != "").map(_.toInt))
 
     // One important consideration is food - in particular, the number of Calories each Elf is carrying (your puzzle input).
     // In case the Elves get hungry and need extra snacks, they need to know which Elf to ask: they'd like to know how many
     // Calories are being carried by the Elf carrying the most Calories.
     //
     // Puzzle == find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
-    def puzzle1(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).max
+    def puzzle1(elves : Seq[Seq[Int]]) : Int = elves.map(_.sum).max
 
     // By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories
     // of food might eventually run out of snacks. To avoid this unacceptable situation, the Elves would instead like to know the
     // total Calories carried by the top three Elves carrying the most Calories.
     //
     // Puzzle == find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
-    def puzzle2(elves : Seq[Seq[Int]]) : Int = elves.map(e => e.sum).sorted.takeRight(3).sum
+    def puzzle2(elves : Seq[Seq[Int]]) : Int = elves.map(_.sum).sorted.takeRight(3).sum
 }
 
 class Day01 extends AnyFlatSpec with should.Matchers {

@@ -13,9 +13,10 @@ class Day03Solver {
     //
     // Puzzle == Find the item type that appears in both compartments of each rucksack. What is the sum of the
     //           priorities of those item types?
-    def puzzle1(rucksacks: Seq[String]) : Int = rucksacks.map(r => priority(r.slice(0, r.length / 2).toSet
-                                                                            .intersect(r.slice(r.length / 2, r.length).toSet)
-                                                                            .head))
+    def puzzle1(rucksacks: Seq[String]) : Int = rucksacks.map(r => priority(r.slice(0, r.length / 2)
+                                                                             .toSet
+                                                                             .intersect(r.slice(r.length / 2, r.length).toSet)
+                                                                             .head))
                                                          .sum
 
     // The Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For

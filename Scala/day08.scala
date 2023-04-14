@@ -8,8 +8,8 @@ class Day08Solver {
 
     def parseData(input: Array[String]) : Array[Array[Byte]] = Array.tabulate(input.length, input.length)((row, col) => (input(row)(col) - '0').toByte)
 
-    def getRow(trees: Array[Array[Byte]], row: Int) : Seq[Byte] = 0 to trees.length - 1 map(col => trees(row)(col))
-    def getCol(trees: Array[Array[Byte]], col: Int) : Seq[Byte] = 0 to trees.length - 1 map(row => trees(row)(col))
+    def getRow(trees: Array[Array[Byte]], row: Int) : Seq[Byte] = 0 to trees.length - 1 map(trees(row)(_))
+    def getCol(trees: Array[Array[Byte]], col: Int) : Seq[Byte] = 0 to trees.length - 1 map(trees(_)(col))
 
     // First, determine whether there is enough tree cover here to keep a tree house hidden. To do this, you need to count the
     // number of trees that are visible from outside the grid when looking directly along a row or column.
@@ -23,10 +23,10 @@ class Day08Solver {
                                                     trees.length * 2 * 2 - 4
 
     def visible(trees: Array[Array[Byte]], tree: Byte, row: Int, col: Int) : Boolean =
-        getRow(trees, row).take(col).forall(c => c < tree) ||
-        getRow(trees, row).drop(col + 1).forall(c => c < tree) ||
-        getCol(trees, col).take(row).forall(r => r < tree) ||
-        getCol(trees, col).drop(row + 1).forall(r => r < tree)
+        getRow(trees, row).take(col).forall(_ < tree) ||
+        getRow(trees, row).drop(col + 1).forall(_ < tree) ||
+        getCol(trees, col).take(row).forall(_ < tree) ||
+        getCol(trees, col).drop(row + 1).forall(_ < tree)
 
     // The Elves just need to know the best spot to build their tree house: they would like to be able to see a lot of trees.
     // To measure the viewing distance from a given tree, look up, down, left, and right from that tree; stop if you reach an
@@ -44,15 +44,8 @@ class Day08Solver {
         viewingDistance(tree, getCol(trees, col).take(row).reverse) *
         viewingDistance(tree, getCol(trees, col).drop(row + 1))
 
-    def viewingDistance(tree: Byte, lineOfSight: Seq[Byte]) : Int = {
-        val los = lineOfSight.takeWhile(t => t < tree).length
-        if(los < lineOfSight.length) {
-            return los + 1
-        }
-        else {
-            return los
-        }
-    }
+    def viewingDistance(tree: Byte, lineOfSight: Seq[Byte]) : Int =
+        math.min(lineOfSight.takeWhile(_ < tree).length + 1, lineOfSight.length)
 }
 
 class Day08 extends AnyFlatSpec with should.Matchers {

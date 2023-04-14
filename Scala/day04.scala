@@ -12,10 +12,9 @@ class Day04Solver {
                                                     (other.min >= min && other.min <= max)
     }
 
-    def parseData(pairs: Seq[String]) : Seq[(Assignment, Assignment)] =
-        pairs.map {
+    def parseData(pairs: Seq[String]) : Seq[(Assignment, Assignment)] = pairs.map {
             case s"$min1-$max1,$min2-$max2" => (Assignment(min1.toInt, max1.toInt), Assignment(min2.toInt, max2.toInt))
-        }
+    }
 
     // Elves have been assigned the job of cleaning up sections of the camp. Every section has a unique ID number, and
     // each Elf is assigned a range of section IDs. However, as some of the Elves compare their section assignments with

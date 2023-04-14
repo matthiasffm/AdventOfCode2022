@@ -24,7 +24,7 @@ class Day09Solver {
         }
     }
 
-    def parseData(input: List[String]) : Seq[Move] = input.map(l => parseMove(l))
+    def parseData(input: List[String]) : Seq[Move] = input.map(parseMove(_))
 
     // Consider a rope with a knot at each end; these knots mark the head and the tail of the rope. If the head moves far enough away from the
     // tail, the tail is pulled toward the head. All elements of the rope from head to tail must always be touching at every single move (diagonally adjacent
@@ -57,11 +57,11 @@ class Day09Solver {
     def diffForNextKnot(prevKnot: Vec2, nextKnot: Vec2) : Vec2 = {
         val diff = prevKnot.minus(nextKnot)
 
-        if(diff.x.abs > 1 || diff.y.abs > 1) {
-            return Vec2(diff.x.abs.min(1) * diff.x.sign, diff.y.abs.min(1) * diff.y.sign)
+        return if(diff.x.abs > 1 || diff.y.abs > 1) {
+            Vec2(diff.x.abs.min(1) * diff.x.sign, diff.y.abs.min(1) * diff.y.sign)
         }
         else {
-            return Vec2(0, 0)
+            Vec2(0, 0)
         }
     }
 }

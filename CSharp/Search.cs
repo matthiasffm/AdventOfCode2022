@@ -4,6 +4,22 @@ using System.Numerics;
 
 public static class Search2
 {
+    private class CostComparer<TElem, TCost> : IComparer<(TElem Elem, TCost Cost)>
+        where TCost : notnull, IComparisonOperators<TCost, TCost, bool>, IAdditionOperators<TCost, TCost, TCost>
+    {
+        public int Compare((TElem Elem, TCost Cost) left, (TElem Elem, TCost Cost) right)
+        {
+            if(left.Cost == right.Cost)
+            {
+                return 0;
+            }
+            else
+            {
+                return left.Cost < right.Cost ? -1 : 1;
+            }
+        }
+    }
+
     /// <summary>
     /// A*-Suche von start zu end unter Berücksichtigung der Distanz-Heuristik und Nachbarschaft von TPos.
     /// </summary>
@@ -33,24 +49,25 @@ public static class Search2
 
         // init Maps für Pfade und Kosten mit dem Startknoten
 
-        var openSet  = new HashSet<TPos>(new [] { start });
+        var openSet  = new BinaryHeap<(TPos, TCost)>(1000, new CostComparer<TPos, TCost>());
+        var posInOpenSet = new Dictionary<TPos, int>();
+
+        var startPos = openSet.Insert((start, EstimateToFinish(start)));
+        posInOpenSet.Add(start, startPos);
+
         var cameFrom = new Dictionary<TPos, TPos>();
 
         var minPathCosts = nodes.ToDictionary(coord => coord, _ => maxCost);
         minPathCosts[start] = default!;
 
-        var estimatedCostToFinish = new Dictionary<TPos, TCost>(minPathCosts)
-        {
-            [start] = EstimateToFinish(start)
-        };
-
         // besten Knoten aus openSet auswählen und mit dessen Kosten
         // minPathCosts und finishedPathCosts aktualisieren
 
-        while(openSet.Any())
+        while(openSet.Count > 0)
         {
             // TODO: Fibonacci-Heap für openSet verwenden
-            var current = openSet.MinBy(o => estimatedCostToFinish[o])!;
+            (var current, var cost) = openSet.ExtractMin();
+            posInOpenSet.Remove(current);
 
             if(GoalReached(current))
             {
@@ -64,8 +81,6 @@ public static class Search2
             }
             else
             {
-                openSet.Remove(current);
-
                 foreach(var neighbor in Neighbors(current))
                 {
                     var costToNeighbor = minPathCosts[current] + CalcCosts(current, neighbor);
@@ -76,11 +91,16 @@ public static class Search2
 
                         cameFrom[neighbor] = current;
                         minPathCosts[neighbor] = costToNeighbor;
-                        estimatedCostToFinish[neighbor] = costToNeighbor + EstimateToFinish(neighbor);
+                        
+                        var estimanedCostToNeighbor = costToNeighbor + EstimateToFinish(neighbor);
 
-                        if(!openSet.Contains(neighbor))
+                        if(!posInOpenSet.TryGetValue(neighbor, out var neighborPos))
                         {
-                            openSet.Add(neighbor);
+                            openSet.Insert((neighbor, estimanedCostToNeighbor));
+                        }
+                        else
+                        {
+                            openSet.DecreaseElement(neighborPos, (neighbor, estimanedCostToNeighbor));
                         }
                     }
                 }

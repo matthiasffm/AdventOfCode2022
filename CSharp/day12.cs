@@ -4,7 +4,6 @@ using NUnit.Framework;
 using FluentAssertions;
 
 using matthiasffm.Common.Math;
-using matthiasffm.Common.Algorithms;
 
 [TestFixture]
 public class Day12
@@ -72,13 +71,13 @@ public class Day12
     // Puzzle == What is the fewest steps required to move from the start to the location that should get the best signal?
     private static int Puzzle1(byte[,] heightmap, (int, int) startPos, (int, int) goal)
     {
-        var bestPath = Search.AStar(heightmap.Select((e, r, c) => (r, c)),
-                                    (startPos.Item1, startPos.Item2),
-                                    (goal.Item1, goal.Item2),
-                                    pos => Neighbors(heightmap, pos.Item1, pos.Item2),
-                                    (pos1, pos2) => CostForOneStep,
-                                    pos => EstimateToGoal(pos, goal),
-                                    int.MaxValue);
+        var bestPath = Search2.AStar(heightmap.Select((e, r, c) => (r, c)),
+                                     (startPos.Item1, startPos.Item2),
+                                     pos => pos.Item1 == goal.Item1 && pos.Item2 == goal.Item2,
+                                     pos => Neighbors(heightmap, pos.Item1, pos.Item2),
+                                     (pos1, pos2) => CostForOneStep,
+                                     pos => EstimateToGoal(pos, goal),
+                                     int.MaxValue);
 
         return bestPath.Count() - 1; // steps == nodes in path - 1
     }

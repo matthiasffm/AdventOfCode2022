@@ -5,7 +5,7 @@ using FluentAssertions;
 
 using System.Diagnostics;
 
-using matthiasffm.Common;
+using matthiasffm.Common.Collections;
 
 [TestFixture]
 public class Day06

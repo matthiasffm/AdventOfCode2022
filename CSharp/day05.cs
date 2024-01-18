@@ -3,7 +3,7 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
-using matthiasffm.Common;
+using matthiasffm.Common.Collections;
 
 [TestFixture]
 public class Day05
@@ -73,8 +73,8 @@ public class Day05
     //           crate letters together and give the Elves the resulting message.
     private static string Puzzle1(Stack<char>[] stacks, IEnumerable<Move> moves)
     {
-        moves.For(move => 1.To(move.Count)
-                           .For(m => stacks[move.To - 1].Push(stacks[move.From - 1].Pop())));
+        moves.Do(move => 1.To(move.Count)
+                          .Do(m => stacks[move.To - 1].Push(stacks[move.From - 1].Pop())));
 
         return TopCrates(stacks);
     }
@@ -85,10 +85,10 @@ public class Day05
     // Puzzle == After the rearrangement procedure completes, what crate ends up on top of each stack? Give the Elves the resulting message.
     private static string Puzzle2(Stack<char>[] stacks, IEnumerable<Move> moves)
     {
-        moves.For(move => 1.To(move.Count)
-                           .Select(i => stacks[move.From - 1].Pop())
-                           .Reverse()
-                           .For(c => stacks[move.To - 1].Push(c)));
+        moves.Do(move => 1.To(move.Count)
+                          .Select(i => stacks[move.From - 1].Pop())
+                          .Reverse()
+                          .Do(c => stacks[move.To - 1].Push(c)));
 
         return TopCrates(stacks);
     }

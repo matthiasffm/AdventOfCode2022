@@ -3,6 +3,7 @@ namespace AdventOfCode2022;
 using NUnit.Framework;
 using FluentAssertions;
 
+using matthiasffm.Common.Algorithms;
 using matthiasffm.Common.Math;
 
 [TestFixture]
@@ -71,13 +72,12 @@ public class Day12
     // Puzzle == What is the fewest steps required to move from the start to the location that should get the best signal?
     private static int Puzzle1(byte[,] heightmap, (int, int) startPos, (int, int) goal)
     {
-        var bestPath = Search2.AStar(heightmap.Select((e, r, c) => (r, c)),
-                                     (startPos.Item1, startPos.Item2),
-                                     pos => pos.Item1 == goal.Item1 && pos.Item2 == goal.Item2,
-                                     pos => Neighbors(heightmap, pos.Item1, pos.Item2),
-                                     (pos1, pos2) => CostForOneStep,
-                                     pos => EstimateToGoal(pos, goal),
-                                     int.MaxValue);
+        var bestPath = Search.AStar((startPos.Item1, startPos.Item2),
+                                    pos => pos.Item1 == goal.Item1 && pos.Item2 == goal.Item2,
+                                    pos => Neighbors(heightmap, pos.Item1, pos.Item2),
+                                    (pos1, pos2) => CostForOneStep,
+                                    pos => EstimateToGoal(pos, goal),
+                                    int.MaxValue);
 
         return bestPath.Count() - 1; // steps == nodes in path - 1
     }
@@ -122,13 +122,12 @@ public class Day12
         // direction from Puzzle1 and start at the _goal_. Now if we reach a zero location, we found
         // the the (shortest) hike from goal to zero.
 
-        var shortestHike = Search2.AStar(heightmap.Select((e, r, c) => (r, c)),
-                                         (goal.Item1, goal.Item2),
-                                         pos => heightmap[pos.Item1, pos.Item2] == 0,
-                                         pos => NeighborsInverse(heightmap, pos.Item1, pos.Item2),
-                                         (pos1, pos2) => CostForOneStep,
-                                         pos => EstimateToAnA(heightmap, pos),
-                                         int.MaxValue);
+        var shortestHike = Search.AStar((goal.Item1, goal.Item2),
+                                        pos => heightmap[pos.Item1, pos.Item2] == 0,
+                                        pos => NeighborsInverse(heightmap, pos.Item1, pos.Item2),
+                                        (pos1, pos2) => CostForOneStep,
+                                        pos => EstimateToAnA(heightmap, pos),
+                                        int.MaxValue);
 
         return shortestHike.Count() - 1; // steps == nodes in path - 1
     }

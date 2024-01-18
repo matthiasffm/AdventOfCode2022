@@ -302,10 +302,10 @@ public partial class Day22
 
     // vector offsets for all 4 movement directions: to the right, down, to the left and up
     private static readonly Vec2<int>[] Directions = new Vec2<int>[] {
-        new Vec2<int>(1, 0),
-        new Vec2<int>(0, 1),
-        new Vec2<int>(-1, 0),
-        new Vec2<int>(0, -1),
+        new(1, 0),
+        new(0, 1),
+        new(-1, 0),
+        new(0, -1),
     };
 
     // As you walk, the monkeys explain that the grove is protected by a force field. To pass through the force field, you have to enter a password; doing so involves
@@ -355,12 +355,18 @@ public partial class Day22
 
             // turn so that dir indexes the next vector clock- or counterclockwise in the Directions array
             dir = move.Turn switch {
-                'L' => (dir - 1).Mod(Directions.Length),
-                'R' => (dir + 1).Mod(Directions.Length),
+                'L' => Mod(dir - 1, Directions.Length),
+                'R' => Mod(dir + 1, Directions.Length),
                 _   => dir,
             };
         }
 
         return 1000 * (pos.Y + 1) + 4 * (pos.X + 1) + dir;
     }
+    private static int Mod(int nmbr, int mod)
+    {
+        var res = nmbr % mod;
+        return (res < 0 && mod > 0) || (res > 0 && mod < 0) ? res + mod : res;
+    }
+
 }

@@ -18,7 +18,7 @@
     <PackageReference Include="fluentassertions" Version="6.3.0" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
 
-    <PackageReference Include="matthiasffm.common" Version="1.5.0" />
+    <PackageReference Include="matthiasffm.common" Version="2.0.0" />
   </ItemGroup>
 
   <!-- damit MS Test SDK keine Compilewarnungen wegen doppeltem Code wirft -->

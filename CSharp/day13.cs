@@ -41,8 +41,8 @@ public class Day13
 
     // parses data for puzzle 1 into pairs of packets
     private static IEnumerable<(object[], object[])> ParseData(string[] data) =>
-        FileUtils.ParseMultilinePairs(data, t => (ConvertToPackets(t.Item1.Tokenize(separators, tokens).ToList()),
-                                                  ConvertToPackets(t.Item2.Tokenize(separators, tokens).ToList())));
+        FileUtils.ParseMultilinePairs(data, t => (ConvertToPackets(Tokenize(t.Item1, separators, tokens).ToList()),
+                                                  ConvertToPackets(Tokenize(t.Item2, separators, tokens).ToList())));
 
     [Test]
     public void TestSamples()
@@ -73,7 +73,7 @@ public class Day13
 
         var packets = data.Concat(new[] { "[[2]]", "[[6]]" })
                           .Where(l => l != string.Empty)
-                          .Select(l => ConvertToPackets(l.Tokenize(separators, tokens).ToList()))
+                          .Select(l => ConvertToPackets(Tokenize(l, separators, tokens).ToList()))
                           .ToArray();
 
         Puzzle2(packets).Should().Be(10 * 14);
@@ -89,7 +89,7 @@ public class Day13
 
         var packets = data.Concat(new[] { "[[2]]", "[[6]]" })
                           .Where(l => l != string.Empty)
-                          .Select(l => ConvertToPackets(l.Tokenize(separators, tokens).ToList()))
+                          .Select(l => ConvertToPackets(Tokenize(l, separators, tokens).ToList()))
                           .ToArray();
 
         Puzzle2(packets).Should().Be(22866);
@@ -190,5 +190,42 @@ public class Day13
 
         Assert(posLeft == posRight);
         return left.Length.CompareTo(right.Length);
+    }
+
+    private static IEnumerable<string> Tokenize(string text,
+                                                string[] separators,
+                                                string[] tokens,
+                                                StringSplitOptions splitOptions = StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+    {
+        var result = new List<string>();
+
+        foreach (var s in text.Split(separators, splitOptions))
+        {
+            for (int i = 0; i < s.Length;)
+            {
+                var (tokenFound, idx) = tokens.Select(t => (token: t, idx: s.AsSpan()[i..].IndexOf(t)))
+                                              .Select(t => t.idx >= 0 ? t : (t.token, idx: int.MaxValue))
+                                              .MinBy(tuple => tuple.idx);
+
+                if (idx == int.MaxValue)
+                {
+                    result.Add(s[i..]);
+                    i = s.Length;
+                }
+                else if (idx == 0)
+                {
+                    result.Add(tokenFound);
+                    i += tokenFound.Length;
+                }
+                else
+                {
+                    result.Add(s.AsSpan()[i..(i + idx)].ToString());
+                    result.Add(tokenFound);
+                    i += idx + tokenFound.Length;
+                }
+            }
+        }
+
+        return result;
     }
 }

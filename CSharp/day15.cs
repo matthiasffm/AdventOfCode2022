@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using static System.Math;
 
-using matthiasffm.Common;
+using matthiasffm.Common.Collections;
 using matthiasffm.Common.Math;
 
 [TestFixture]

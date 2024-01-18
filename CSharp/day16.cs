@@ -5,7 +5,7 @@ using FluentAssertions;
 
 using System.Collections.Generic;
 
-using matthiasffm.Common;
+using matthiasffm.Common.Collections;
 using matthiasffm.Common.Math;
 
 // TODO:
